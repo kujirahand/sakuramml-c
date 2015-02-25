@@ -1031,6 +1031,23 @@ s_bool KRun_random_r(SakuraObj *skr, KToken *tok) {
   return S_TRUE;
 }
 
+s_bool KRun_randomSelect_r(SakuraObj *skr, KToken *tok) {
+  int i, r, num;
+  int *v;
+  // eval
+  KRun_evalTokenList(skr, tok->arg);
+  num = tok->no;
+  // pop values
+  v = s_new_a(int, num);
+  for (i = 0; i < num; i++) {
+    v[num - i - 1] = KRun_popInt(skr);
+  }
+  r = rand() % num;
+  KRun_pushValue(skr, SValue_newInt(v[r]));
+  s_free(v);
+  return S_TRUE;
+}
+
 s_bool KRun_step_r(SakuraObj *skr, KToken *tok) {
   KTrack *tr = SakuraObj_curTrack(skr);
   int len = KRun_calcNoteLen(tok->value->ptr, tr->l, skr->info->timebase);

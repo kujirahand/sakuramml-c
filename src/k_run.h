@@ -102,6 +102,7 @@ s_bool KRun_MML_r(SakuraObj *skr, KToken *tok);
 s_bool KRun_SizeOf_r(SakuraObj *skr, KToken *tok);
 s_bool KRun_version_r(SakuraObj *skr, KToken *tok);
 s_bool KRun_random_r(SakuraObj *skr, KToken *tok);
+s_bool KRun_randomSelect_r(SakuraObj *skr, KToken *tok);
 s_bool KRun_step_r(SakuraObj *skr, KToken *tok);
 s_bool KRun_time_r(SakuraObj *skr, KToken *tok);
 s_bool KRun_mid_r(SakuraObj *skr, KToken *tok);

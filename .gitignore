@@ -32,3 +32,6 @@
 .DS_Store
 Thumbs.db
 
+# sakuramml
+*.mid
+

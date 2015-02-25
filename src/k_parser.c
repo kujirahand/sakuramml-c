@@ -124,6 +124,7 @@ void KParser_appendReaderCommand(SHash *hash) {
   SHash_set(hash, "VERSION", SValue_newSysFunc(KRun_version_r));
   SHash_set(hash, "VERSION", SValue_newSysFunc(KRun_version_r));
   SHash_set(hash, "Random", SValue_newSysFunc(KRun_random_r));
+  SHash_set(hash, "RandomSelect", SValue_newSysFunc(KRun_randomSelect_r));
   SHash_set(hash, "Step", SValue_newSysFunc(KRun_step_r));
   SHash_set(hash, "STEP", SValue_newSysFunc(KRun_step_r));
   SHash_set(hash, "Time", SValue_newSysFunc(KRun_time_r));
@@ -807,7 +808,7 @@ KToken *KParser_readValueList(SakuraObj *skr, KFile *file) {
     SKIP_SPACE(file->pos);
     if (*file->pos == ',' || *file->pos == ':') {
       file->pos++;
-      SKIP_SPACE(file->pos);
+      SKIP_SPACE_CRLF(file->pos);
       continue;
     }
     break;
