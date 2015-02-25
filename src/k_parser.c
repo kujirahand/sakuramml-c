@@ -66,6 +66,9 @@ void KParser_appendCommand(SHash *hash) {
   SHash_set(hash, "Function", KParser_defineUserFunc);
   SHash_set(hash, "FUNCTION", KParser_defineUserFunc);
   SHash_set(hash, "Return", KParser_return);
+  SHash_set(hash, "EXIT", KParser_break);
+  SHash_set(hash, "Break", KParser_break);
+  SHash_set(hash, "BREAK", KParser_break);
   SHash_set(hash, "RETURN", KParser_return);
   SHash_set(hash, "TrackSync", KParser_trackSync);
   SHash_set(hash, "TimeKeyFlag", KParser_timekeyflag);
@@ -135,7 +138,9 @@ void KParser_appendReaderCommand(SHash *hash) {
   SHash_set(hash, "NoteNo", SValue_newSysFunc(KRun_NoteNo_r));
 }
 
-
+void KParser_appendSystemVairables(SHash *hash) {
+  SHash_set(hash, "SoundType", SValue_newInt(0));
+}
 
 /** read Lowercase Command */
 s_bool KParser_readLowerCommand(SakuraObj *skr, KFile *file) {
@@ -607,7 +612,7 @@ s_bool KParser_readOctaveCommand(SakuraObj *skr, KFile *file) {
 /** read Uppercase Command */
 s_bool KParser_readUpperCommand(SakuraObj *skr, KFile *file) {
   char *p, *pTop;
-  char cmd[256];
+  char cmd[256], msg[512];
   long len;
   KParserCommand f;
   KToken *t;
@@ -639,6 +644,11 @@ s_bool KParser_readUpperCommand(SakuraObj *skr, KFile *file) {
     if (sv != NULL && sv->v_type == SVALUE_TYPE_USER_FUNC) {
       // printf("USER_FUNC:%s\n", cmd);
       return KParser_callUserFunc(skr, file, sv->value.f);
+    }
+    if (sv == NULL) {
+      sprintf(msg, "Unknown Command \"%s\"", cmd);
+      k_error(skr, K_ERROR_SYNTAX, msg, file->pos);
+      return S_TRUE;
     }
     // maybe let variable
     if (*file->pos == '=') {
@@ -1828,6 +1838,11 @@ s_bool KParser_return(SakuraObj *skr, KFile *file) {
   return S_TRUE;
 }
 
+s_bool KParser_break(SakuraObj *skr, KFile *file) {
+  KToken *t = KToken_new(KTOKEN_BREAK, file->pos);
+  KFile_appendToken(file, t);
+  return S_TRUE;
+}
 
 
 s_bool KParser_octaveOnetime(SakuraObj *skr, KFile *file) {

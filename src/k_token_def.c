@@ -82,14 +82,15 @@ char *KTokenDef_toString(int n) {
   if (n==0x2100) { return "KTOKEN_IF"; }
   if (n==0x2101) { return "KTOKEN_WHILE"; }
   if (n==0x2102) { return "KTOKEN_FOR"; }
-  if (n==0x2103) { return "KTOKEN_DO_VARIABLE"; }
-  if (n==0x2104) { return "KTOKEN_DEF_FUNCTION"; }
-  if (n==0x2105) { return "KTOKEN_CALL_USER_FUNC"; }
-  if (n==0x2106) { return "KTOKEN_RETURN"; }
-  if (n==0x2107) { return "KTOKEN_CALL_SYS_FUNC"; }
-  if (n==0x2108) { return "KTOKEN_SHARP_MACRO_DEFINE"; }
-  if (n==0x2109) { return "KTOKEN_SHARP_MACRO_EXEC"; }
-  if (n==0x210A) { return "KTOKEN_VAR_REPLACE"; }
+  if (n==0x2103) { return "KTOKEN_BREAK"; }
+  if (n==0x2104) { return "KTOKEN_DO_VARIABLE"; }
+  if (n==0x2105) { return "KTOKEN_DEF_FUNCTION"; }
+  if (n==0x2106) { return "KTOKEN_CALL_USER_FUNC"; }
+  if (n==0x2107) { return "KTOKEN_RETURN"; }
+  if (n==0x2108) { return "KTOKEN_CALL_SYS_FUNC"; }
+  if (n==0x2109) { return "KTOKEN_SHARP_MACRO_DEFINE"; }
+  if (n==0x210A) { return "KTOKEN_SHARP_MACRO_EXEC"; }
+  if (n==0x210B) { return "KTOKEN_VAR_REPLACE"; }
   if (n==0x2110) { return "KTOKEN_GOTO"; }
   if (n==0x2111) { return "KTOKEN_GOTO_IF_TRUE"; }
   if (n==0x2112) { return "KTOKEN_GOTO_IF_FALSE"; }

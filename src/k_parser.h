@@ -41,6 +41,7 @@ s_bool KParser_readFlagCommand(SakuraObj *skr, KFile *file);
 void KParser_appendCommand(SHash *hash);
 void KParser_freeCommandHash(SHash *hash);
 void KParser_appendReaderCommand(SHash *hash);
+void KParser_appendSystemVairables(SHash *hash);
 
 // command
 s_bool KParser_readNoteOn(SakuraObj *skr, KFile *file);
@@ -80,6 +81,7 @@ s_bool KParser_while(SakuraObj *skr, KFile *file);
 s_bool KParser_defineUserFunc(SakuraObj *skr, KFile *file);
 s_bool KParser_callUserFunc(SakuraObj *skr, KFile *file, KFunction *f); // sp sub func
 s_bool KParser_return(SakuraObj *skr, KFile *file);
+s_bool KParser_break(SakuraObj *skr, KFile *file);
 s_bool KParser_octaveOnetime(SakuraObj *skr, KFile *file);
 s_bool KParser_measureShift(SakuraObj *skr, KFile *file);
 s_bool KParser_tempo(SakuraObj *skr, KFile *file);

@@ -154,7 +154,7 @@ SakuraObj *SakuraObj_new() {
   skr->variables = SHash_new(0);
   skr->variables->callback_free_item = k_main_varialbe_freeItem;
   KParser_appendReaderCommand(skr->variables);
-  
+  KParser_appendSystemVairables(skr->variables);
   // Local Variables
   skr->local_vars = SHash_new(0);
   skr->local_vars->callback_free_item = k_main_varialbe_freeItem;
