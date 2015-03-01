@@ -15,7 +15,8 @@ int goTest() {
   char *infile;
   char *outfile = "./test.mid";
   char *infile1 = "test.mml";
-  char *infile2 = "~/repos/sakura-c/src/test.mml";
+  char infile2[2049];
+  char *p;
   SakuraCommandOpt opt;
   
   // go test
@@ -25,14 +26,22 @@ int goTest() {
   }
 
   // go Sakura
-  if (file_exists(infile1)) {
+  if (file_exists(infile1)) { // current dir
     infile = infile1;
   }
-  else if (file_exists(infile2)) {
-    infile = infile2;
-  } else {
-    fprintf(stderr, "[test] no test.mml file\n");
-    return -1;
+  else {
+    // source dir
+    strcpy(infile2, __FILE__);
+    p = strstr(infile2, "sakura.c");
+    if (p != NULL) {
+      strcpy(p, infile1);
+    }
+    if (file_exists(infile2)) {
+      infile = infile2;
+    } else {
+      fprintf(stderr, "[test] no test.mml file\n");
+      return -1;
+    }
   }
   
   opt.is_debug = S_TRUE;
