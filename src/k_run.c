@@ -79,7 +79,6 @@ s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
       case KTOKEN_DIV: res = KRun_div(skr, tok); break;
       case KTOKEN_RHYTHM: res = KRun_rhythm(skr, tok); break;
       case KTOKEN_KEYFLAG: res = KRun_keyflag(skr, tok); break;
-      case KTOKEN_PITCH_BEND: res = KRun_pitchBend(skr, tok); break;
       case KTOKEN_V_ON_NOTE: res = KRun_v_onNote(skr, tok); break;
       case KTOKEN_T_ON_NOTE: res = KRun_t_onNote(skr, tok); break;
       case KTOKEN_PRINT: res = KRun_print(skr, tok); break;
@@ -595,9 +594,16 @@ s_bool KRun_CC(SakuraObj *skr, KToken *tok) {
   SValue_free(value);
 
   // control change
-  e = KSmfEvent_newCC(tr->time, tr->ch, no, v);
+  if (no == 130) { // PitchBend Full range
+    e = KSmfEvent_newPitchBend(tr->time, tr->ch, v);
+  }
+  else if (no == 131) { // PitchBend Half range
+    e = KSmfEvent_newPitchBend(tr->time, tr->ch, ((v & 0x7F) << 7));
+  }
+  else {
+    e = KSmfEvent_newCC(tr->time, tr->ch, no, v);
+  }
   KSmfTrack_append(smf_tr, e);
-
   return S_TRUE;
 }
 
@@ -1646,29 +1652,6 @@ s_bool KRun_keyflag(SakuraObj *skr, KToken *tok) {
     }
     p++;
   }
-  return S_TRUE;
-}
-
-s_bool KRun_pitchBend(SakuraObj *skr, KToken *tok) {
-  int bend, n;
-  KTrack *tr;
-  KSmfTrack *smf_tr;
-  KSmfEvent *e;
-  // get value
-  KRun_evalToken(skr, tok->arg);
-  bend = KRun_popInt(skr);
-  // En mm ll = -8192,0,8191 = 0x0000,0x4000,0x7F7F
-  tr = SakuraObj_curTrack(skr);
-  smf_tr = SakuraObj_curSmfTrack(skr);
-  e = KSmfEvent_new();
-  e->status = 0xE0;
-  e->ch = tr->ch;
-  n = SET_IN_RANGE(-8192, 8191, bend) + 8192;
-  e->data2 = n & 0x7F;
-  n = n >> 7;
-  e->data1 = n & 0x7F;
-  KSmfTrack_append(smf_tr, e);
-  //
   return S_TRUE;
 }
 

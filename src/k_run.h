@@ -80,7 +80,6 @@ s_bool KRun_sysex(SakuraObj *skr, KToken *tok);
 s_bool KRun_rhythm(SakuraObj *skr, KToken *tok);
 s_bool KRun_keyflag(SakuraObj *skr, KToken *tok);
 s_bool KRun_timeSignature(SakuraObj *skr, KToken *tok);
-s_bool KRun_pitchBend(SakuraObj *skr, KToken *tok);
 s_bool KRun_v_onNote(SakuraObj *skr, KToken *tok);
 s_bool KRun_t_onNote(SakuraObj *skr, KToken *tok);
 s_bool KRun_trackSync(SakuraObj *skr, KToken *tok);

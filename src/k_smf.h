@@ -46,6 +46,7 @@ void KSmfTSrack_grow(KSmfTrack *track, int newsize);
 KSmfEvent *KSmfEvent_new();
 void KSmfEvent_free(KSmfEvent *event);
 KSmfEvent *KSmfEvent_newCC(int time, int ch, int no, int value);
+KSmfEvent *KSmfEvent_newPitchBend(int time, int ch, int value);
 
 /** KSmfTrackList function */
 KSmfTrackList *KSmfTrackList_new();

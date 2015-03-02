@@ -1,4 +1,7 @@
-PitchBend(40)
+l4
+RPN=0,0,12
+r4
+PitchBend(4000)
 c
 PitchBend(0)
 c

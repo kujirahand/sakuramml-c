@@ -33,6 +33,21 @@ KSmfEvent *KSmfEvent_newCC(int time, int ch, int no, int value) {
   return e;
 }
 
+KSmfEvent *KSmfEvent_newPitchBend(int time, int ch, int value) {
+  int n;
+  KSmfEvent *e;
+  // En mm ll = -8192,0,8191 = 0x0000,0x4000,0x7F7F
+  e = KSmfEvent_new();
+  e->time = time;
+  e->status = 0xE0;
+  e->ch = ch;
+  n = SET_IN_RANGE(-8192, 8191, value) + 8192;
+  e->data2 = n & 0x7F;
+  n = n >> 7;
+  e->data1 = n & 0x7F;
+  return e;
+}
+
 KSmfTrack *KSmfTrack_new() {
   KSmfTrack *track = s_new(KSmfTrack);
   track->size = 256;
