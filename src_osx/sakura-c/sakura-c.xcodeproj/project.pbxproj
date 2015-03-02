@@ -110,6 +110,7 @@
 		B95183E71AA3D2FC00AEED50 /* s_value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = s_value.h; path = ../../../src/s_value.h; sourceTree = "<group>"; };
 		B95183E81AA3D2FC00AEED50 /* sakura.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sakura.c; path = ../../../src/sakura.c; sourceTree = "<group>"; };
 		B95183E91AA3D2FC00AEED50 /* sakura.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sakura.h; path = ../../../src/sakura.h; sourceTree = "<group>"; };
+		B95184091AA3D5AD00AEED50 /* test.mml */ = {isa = PBXFileReference; lastKnownFileType = text; name = test.mml; path = ../../../src/test.mml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +199,7 @@
 				B95183E71AA3D2FC00AEED50 /* s_value.h */,
 				B95183E81AA3D2FC00AEED50 /* sakura.c */,
 				B95183E91AA3D2FC00AEED50 /* sakura.h */,
+				B95184091AA3D5AD00AEED50 /* test.mml */,
 			);
 			path = "sakura-c";
 			sourceTree = "<group>";

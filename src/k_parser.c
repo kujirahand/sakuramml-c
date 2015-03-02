@@ -725,33 +725,40 @@ s_bool KParser_readLoop(SakuraObj *skr, KFile *file) {
   return S_TRUE;
 }
 
+s_bool KParser_readCC2(SakuraObj *skr, KFile *file, KToken *cno) {
+  KToken *value;
+  KToken *cc;
+  
+  // Pre Order Parameter?
+  if (*file->pos == '.') {
+    // TODO: CC.PreOrderParameters
+    return S_FALSE;
+  }
+  
+  // Read One Shot
+  value = KParser_readValue(skr, file);
+  if (value == NULL) {
+    k_error(skr, K_ERROR_ARG_COUNT, "y(CC),(Value)", file->pos);
+    return S_FALSE;
+  }
+  // Register to file
+  cc = KToken_new(KTOKEN_CC, file->pos);
+  cc->arg = cno;
+  cc->arg->next = value;
+  KFile_appendToken(file, cc);
+  return S_TRUE;
+}
+
 s_bool KParser_readCC(SakuraObj *skr, KFile *file) {
-  KToken *t;
-  KToken *cno, *cv;
+  KToken *cno;
   //
   file->pos++; // skip 'y'
-  t = KToken_new(KTOKEN_CC, file->pos);
   cno = KParser_readValue(skr, file);
   SKIP_SPACE(file->pos);
   if (*file->pos == ',') {
     file->pos++;
-  } else if (*file->pos == '(') {
-  } else {
-    k_error(skr, K_ERROR_ARG_COUNT, "y(CC),(Value)", file->pos);
-    KToken_free(t);
-    return S_FALSE;
   }
-  cv = KParser_readValue(skr, file);
-  if (cv == NULL) {
-    k_error(skr, K_ERROR_SYNTAX, "Command 'y' not enogh arguments.", file->pos);
-    return S_FALSE;
-  }
-  
-  t->arg = cno;
-  t->arg->next = cv;
-
-  KFile_appendToken(file, t);
-  return S_TRUE;
+  return KParser_readCC2(skr, file, cno);
 }
 
 s_bool KParser_rpn(SakuraObj *skr, KFile *file) {
@@ -2140,13 +2147,23 @@ KToken *KParser_parseString(SakuraObj *skr, const char* str, char *hint_pos) {
 }
 
 s_bool KParser_pitchBend(SakuraObj *skr, KFile *file) {
-  KToken *pb;
+  s_bool full_mode = S_TRUE;
+  KToken *cno;
   
-  pb = KToken_new(KTOKEN_PITCH_BEND, file->pos);
-  pb->arg = KParser_readValue(skr, file);
-  KFile_appendToken(file, pb);
+  // Check Bend Full mode
+  if (KParser_last_command == NULL) { // lower command 'y'
+    full_mode = S_FALSE;
+    file->pos++; // skip 'y'
+    if (*file->pos == '%') {
+      file->pos++;
+      full_mode = S_TRUE;
+    }
+  }
   
-  return S_TRUE;
+  // Read CC (PitchBend like CC)
+  cno = KToken_new(KTOKEN_NUMBER, file->pos);
+  cno->no = (full_mode) ? 130 : 131;
+  return KParser_readCC2(skr, file, cno);
 }
 
 s_bool KParser_trackSync(SakuraObj *skr, KFile *file) {
