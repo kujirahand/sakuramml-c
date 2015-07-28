@@ -309,7 +309,23 @@ void KValueStack_free(SList *list) {
   SList_free(list);
 }
 
-
+// KTokenNoteOnOption
+KTokenNoteOnOption *KTokenNoteOnOption_new() {
+  KTokenNoteOnOption *o = s_new(KTokenNoteOnOption);
+  
+  o->v = 0;
+  o->q = 0;
+  o->t = 0;
+  o->v_mode = o->q_mode = o->t_mode = K_NOTEON_MODE_UNSET;
+  o->q_step_mode = S_FALSE;
+  
+  return o;
+}
+void KTokenNoteOnOption_free(void *token) {
+  KToken *t = (KToken*)token;
+  KTokenNoteOnOption *opt = (KTokenNoteOnOption*)t->extra;
+  s_free(opt);
+}
 
 
 

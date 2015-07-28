@@ -158,6 +158,7 @@ s_bool KParser_readLowerCommand(SakuraObj *skr, KFile *file) {
     case '_': return KParser_readRest(skr, file);
     case 'l': return KParser_readCommandL(skr, file);
     case 'o': return KParser_readCommandO(skr, file);
+    case 'p': return KParser_pitchBend(skr, file);
     case 'q': return KParser_readCommandQ(skr, file);
     case 't': return KParser_readCommandT(skr, file);
     case 'v': return KParser_readCommandV(skr, file);
@@ -330,15 +331,20 @@ s_bool KParser_readNoteOn(SakuraObj *skr, KFile *file) {
   // Token
   t = KToken_new(KTOKEN_NOTE, file->pos);
   KFile_appendToken(file, t);
+  t->extra = KTokenNoteOnOption_new();
+  t->free_f = KTokenNoteOnOption_free;
+  
   // Note Name
   t->no = (int)*file->pos;
   file->pos++;
+  
   // Check natural
   if (*file->pos == '*') {
     file->pos++;
     natural = 0x100;
   }
-  // Check Sharp
+  
+  // Check Sharp Flat
   t->flag = 0;
   for (;;) {
     if (*file->pos == '+' || *file->pos == '#') {
@@ -351,13 +357,15 @@ s_bool KParser_readNoteOn(SakuraObj *skr, KFile *file) {
     file->pos++;
   }
   t->flag = t->flag | natural; // for Natural & Sharp
+  
   // length
   len = KParser_readLen(skr, file);
   t->value = len;
-  // velocity etc
+  
+  // option parameters
+  SKIP_SPACE(file->pos);
   if (*file->pos == ',') {
-    file->pos++;
-    t->arg = KParser_readValueList(skr, file);
+    KParser_readNoteOn_readOption(skr, file, t);
   }
   // tie
   if (*file->pos == '&') {
@@ -366,6 +374,78 @@ s_bool KParser_readNoteOn(SakuraObj *skr, KFile *file) {
   
   return S_TRUE;
 }
+
+// NoteOn paramters
+s_bool KParser_readNoteOn_readOption(SakuraObj *skr, KFile *file, KToken* t) {
+  
+  KTokenNoteOnOption *opt = t->extra;
+  char tmp;
+  
+  file->pos++; // skip ,
+  SKIP_SPACE(file->pos);
+  
+  // q parameter
+  if (IS_NUMERIC_OR_FLAG(*file->pos) || *file->pos == '%') {
+    tmp = '\0';
+    if (*file->pos == '+' || *file->pos == '-') {
+      opt->q_mode = K_NOTEON_MODE_RELATIVE;
+      tmp = *file->pos;
+      file->pos++;
+    } else {
+      opt->q_mode = K_NOTEON_MODE_ABSOLUTE;
+    }
+    if (*file->pos == '%') {
+      opt->q_step_mode = S_TRUE;
+      file->pos++;
+    }
+    opt->q = s_readInt(file->pos, 0, &file->pos);
+    if (tmp == '-') opt->q *= -1;
+  }
+  SKIP_SPACE(file->pos);
+  
+  // v parameter
+  if (*file->pos == ',') {
+    file->pos++;
+    SKIP_SPACE(file->pos);
+    
+    if (IS_NUMERIC_OR_FLAG(*file->pos)) {
+      tmp = '\0';
+      if (*file->pos == '+' || *file->pos == '-') {
+        opt->v_mode = K_NOTEON_MODE_RELATIVE;
+        tmp = *file->pos;
+        file->pos++;
+      } else {
+        opt->v_mode = K_NOTEON_MODE_ABSOLUTE;
+      }
+      opt->v = s_readInt(file->pos, 0, &file->pos);
+      if (tmp == '-') opt->v *= -1;
+    }
+    SKIP_SPACE(file->pos);
+  }
+  
+  // t parameter
+  if (*file->pos == ',') {
+    file->pos++;
+    SKIP_SPACE(file->pos);
+    
+    if (IS_NUMERIC_OR_FLAG(*file->pos)) {
+      tmp = '\0';
+      if (*file->pos == '+' || *file->pos == '-') {
+        opt->t_mode = K_NOTEON_MODE_RELATIVE;
+        tmp = *file->pos;
+        file->pos++;
+      } else {
+        opt->t_mode = K_NOTEON_MODE_ABSOLUTE;
+      }
+      opt->t = s_readInt(file->pos, 0, &file->pos);
+      if (tmp == '-') opt->t *= -1;
+    }
+    SKIP_SPACE(file->pos);
+  }
+  
+  return S_TRUE;
+}
+
 
 s_bool KParser_readNoteOnNo(SakuraObj *skr, KFile *file) {
   KToken *t;
@@ -383,10 +463,9 @@ s_bool KParser_readNoteOnNo(SakuraObj *skr, KFile *file) {
     len = KParser_readLen(skr, file);
     t->value = len;
   }
-  // velocity etc
+  // option parameters
   if (*file->pos == ',') {
-    file->pos++;
-    t->arg = KParser_readValueList(skr, file);
+    KParser_readNoteOn_readOption(skr, file, t);
   }
   // tie
   if (*file->pos == '&') {
@@ -521,6 +600,15 @@ s_bool KParser_readCommandQ(SakuraObj *skr, KFile *file) {
 
   // check flag
   t->flag = KParser_readFlag(file);
+  
+  // check step mode
+  if (*file->pos == '%') {
+    file->pos++;
+    t->no = 1; // STEP_MODE
+  } else {
+    t->no = 0;
+  }
+  
   // check num
   t->value = KParser_readNum(skr, file);
   return S_TRUE;
@@ -728,10 +816,16 @@ s_bool KParser_readLoop(SakuraObj *skr, KFile *file) {
 s_bool KParser_readCC2(SakuraObj *skr, KFile *file, KToken *cno) {
   KToken *value;
   KToken *cc;
+  KToken *list;
   
   // Pre Order Parameter?
   if (*file->pos == '.') {
     // TODO: CC.PreOrderParameters
+    if (strcmp(file->pos, ".onTime")) {
+      file->pos += 7;
+      list = KParser_readValueList(skr, file);
+      // TODO
+    }
     return S_FALSE;
   }
   
@@ -1620,7 +1714,7 @@ s_bool KParser_if(SakuraObj *skr, KFile *file) {
   // set expr
   if_t->arg = KParser_readValue(skr, file);
   
-  SKIP_SPACE(file->pos);
+  SKIP_SPACE_CRLF(file->pos);
   if (*file->pos != '{') {
     k_error(skr, K_ERROR_SYNTAX, "IF(e) { .. } ELSE { .. }", file->pos);
     return S_FALSE;

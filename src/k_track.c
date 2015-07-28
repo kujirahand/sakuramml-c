@@ -92,6 +92,7 @@ KTrack *KTrack_new_(int timebase, const char *file, int lineno) {
   p->ch = 1;
   p->o = 5;
   p->q = 80;
+  p->q_step_mode = S_FALSE;
   p->l = timebase;
   p->v = 100;
   p->v_onNote = SList_new();

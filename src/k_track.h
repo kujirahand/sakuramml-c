@@ -17,7 +17,8 @@ typedef struct {
   int v;            /// velocity
   int v_[10];       /// velocity(3)
   int t;            /// timing
-  int q;            /// gate rate (percent)
+  int q;            /// gate rate
+  s_bool q_step_mode;/// gate step mode
   int l;            /// step
   int Voice;        /// Voice (Default=0)
   int Port;         /// Port (Default=0)

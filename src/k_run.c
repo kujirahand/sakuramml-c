@@ -13,6 +13,7 @@
 #include "s_value.h"
 #include "k_parser.h"
 #include "k_function.h"
+#include "k_token.h"
 
 KToken *k_run_next_token = NULL;
 int func_return_count = 0;
@@ -47,8 +48,7 @@ s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
       // TODO: KRun_runTokenList switch
       case KTOKEN_UNKNOWN:
       case KTOKEN_TOP:
-      case KTOKEN_NOP:
-        break;
+      case KTOKEN_NOP: break;
       case KTOKEN_NOTE: res = KRun_NoteOn(skr, tok); break;
       case KTOKEN_NOTE_NO: res = KRun_NoteOn(skr, tok); break;
       case KTOKEN_REST: res = KRun_Rest(skr, tok); break;
@@ -93,6 +93,7 @@ s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
       case KTOKEN_SHARP_MACRO_DEFINE: res = KRun_sharp_macro_define(skr, tok); break;
       case KTOKEN_SHARP_MACRO_EXEC: res = KRun_sharp_macro_exec(skr, tok); break;
       case KTOKEN_CC_UPPER: res = KRun_CCUpper(skr, tok); break;
+      case KTOKEN_RPN: res = KRun_rpn(skr, tok); break;
       // FOR SCRIPT
       case KTOKEN_IF: res = KRun_if(skr, tok); break;
       case KTOKEN_WHILE: res = KRun_while(skr, tok); break;
@@ -163,6 +164,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   KSmfEvent *e;
   char name;
   SValue *val;
+  KTokenNoteOnOption *opt = (KTokenNoteOnOption*)tok->extra;
   
   // default
   tr = SakuraObj_curTrack(skr);
@@ -173,7 +175,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   v = tr->v;
   t = tr->t;
   skr->info->octaveOnetime = 0;
-  //
+  
   // ---------------------------
   // note no
   if (tok->token_type == KTOKEN_NOTE) {
@@ -211,7 +213,50 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   } else {
     len = l;
   }
-  qlen = (int)floor(len * (q / 100.0));
+  
+  // calc qlen
+  if (tr->q_step_mode) {
+    qlen = q;
+  } else {
+    qlen = (int)floor(len * (q / 100.0)) - 1;
+  }
+  switch (opt->q_mode) {
+    case K_NOTEON_MODE_ABSOLUTE:
+      if (opt->q_step_mode) {
+        qlen = opt->q;
+      } else {
+        q = opt->q;
+        qlen = (int)floor(len * (q / 100.0)) - 1;
+      }
+      break;
+    case K_NOTEON_MODE_RELATIVE:
+      if (opt->q_step_mode) {
+        qlen += opt->q;
+      } else {
+        q += opt->q;
+        qlen = (int)floor(len * (q / 100.0)) - 1;
+      }
+      break;
+  }
+  
+  switch (opt->v_mode) {
+    case K_NOTEON_MODE_ABSOLUTE:
+      v = opt->v;
+      break;
+    case K_NOTEON_MODE_RELATIVE:
+      v += opt->v;
+      break;
+  }
+  
+  switch (opt->t_mode) {
+    case K_NOTEON_MODE_ABSOLUTE:
+      t = opt->t;
+      break;
+    case K_NOTEON_MODE_RELATIVE:
+      t += opt->t;
+      break;
+  }
+  
   // v.onNote
   if (tr->v_onNote->len > 0) {
     val = SList_shift(tr->v_onNote);
@@ -321,6 +366,7 @@ s_bool KRun_Q(SakuraObj *skr, KToken *tok) {
   tr = SakuraObj_curTrack(skr);
   tr->q = KRun_cmd_value(tok, tr->q);
   tr->q = SET_IN_RANGE(1, 1000, tr->q);
+  tr->q_step_mode = (tok->no == 1);
   
   return S_TRUE;
 }

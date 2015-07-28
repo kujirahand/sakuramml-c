@@ -46,6 +46,7 @@ void KParser_appendSystemVairables(SHash *hash);
 // command
 s_bool KParser_readNoteOn(SakuraObj *skr, KFile *file);
 s_bool KParser_readNoteOnNo(SakuraObj *skr, KFile *file);
+s_bool KParser_readNoteOn_readOption(SakuraObj *skr, KFile *file, KToken* t);
 s_bool KParser_readRest(SakuraObj *skr, KFile *file);
 s_bool KParser_readCommandL(SakuraObj *skr, KFile *file);
 s_bool KParser_readCommandO(SakuraObj *skr, KFile *file);

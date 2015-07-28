@@ -29,6 +29,25 @@ typedef struct _KToken {
 } KToken;
 
 /**
+ * NoteOn option
+ */
+typedef struct {
+  // ノート[音長][,ゲート][,ベロシティ][,タイミング]
+  // Note len,q,v,t
+  int v;
+  int v_mode;
+  int q;
+  int q_mode;
+  s_bool q_step_mode;
+  int t;
+  int t_mode;
+} KTokenNoteOnOption;
+
+#define K_NOTEON_MODE_UNSET     0
+#define K_NOTEON_MODE_ABSOLUTE  1
+#define K_NOTEON_MODE_RELATIVE  2
+
+/**
  * If Token option
  */
 typedef struct {
@@ -79,6 +98,10 @@ void KFile_appendToken(KFile *file, KToken *t);
 // KLoopItem method
 void KLoopStack_free(SList *list);
 void KValueStack_free(SList *list);
+
+// KTokenNoteOnOption
+KTokenNoteOnOption *KTokenNoteOnOption_new();
+void KTokenNoteOnOption_free();
 
 #endif
 

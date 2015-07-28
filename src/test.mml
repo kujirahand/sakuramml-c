@@ -1,7 +1,5 @@
-l4
-RPN=0,0,12
-r4
-PitchBend(4000)
-c
-PitchBend(0)
-c
+@82
+l4 
+q100 cg
+[4 q%48 c,%96 g cg ]
+
