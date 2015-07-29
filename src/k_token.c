@@ -25,6 +25,7 @@ KToken *KToken_new_(int token_type, char *pos, const char *file, int lineno) {
   t->token_type = token_type;
   t->pos = pos;
   t->next = NULL;
+  t->b_arg_free = S_TRUE;
   return t;
 }
 
@@ -34,16 +35,22 @@ KToken *KToken_new_(int token_type, char *pos, const char *file, int lineno) {
  */
 void KToken_free(KToken *t) {
   if (t == NULL) return;
+  
   // free arg
   if (t->arg != NULL) {
-    KToken_freeAll(t->arg);
+    if (t->b_arg_free) {
+      KToken_freeAll(t->arg);
+    }
   }
+  
   // free value
   SString_free(t->value);
+  
   // calc operator ?
   if (KToken_isCalcOp(t->token_type)) {
     KToken_freeAll((KToken *)t->extra);
   }
+  
   // free function
   if (t->free_f != NULL) t->free_f(t);
   
@@ -325,6 +332,7 @@ void KTokenNoteOnOption_free(void *token) {
   KToken *t = (KToken*)token;
   KTokenNoteOnOption *opt = (KTokenNoteOnOption*)t->extra;
   s_free(opt);
+  t->extra = NULL;
 }
 
 

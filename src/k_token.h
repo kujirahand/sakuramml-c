@@ -22,6 +22,7 @@ typedef struct _KToken {
   int flag;               /// data flag (-1 / 0:direct / 1)
   char *pos;              /// Data Pos
   struct _KToken *arg;    /// Token Argument
+  s_bool b_arg_free;      /// Free?
   void *extra;            /// Extra data
   void *cache;            /// for cache contents
   KTokenFreeFunc free_f;  /// Free Func

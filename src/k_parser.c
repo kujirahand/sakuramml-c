@@ -2269,9 +2269,11 @@ s_bool KParser_trackSync(SakuraObj *skr, KFile *file) {
 s_bool KParser_trackSub(SakuraObj *skr, KFile *file) {
   KToken *t;
   //
+  SKIP_SPACE(file->pos);
   t = KToken_new(KTOKEN_TRACK_SUB, file->pos);
   t->value = KParser_readString(skr, file);
   t->arg = KParser_parseString(skr, t->value->ptr, t->pos);
+  t->b_arg_free = S_FALSE; // Free in String parser
   KFile_appendToken(file, t);
   //
   return S_TRUE;
