@@ -67,6 +67,18 @@ char *s_lib_get_errors() {
   return res;
 }
 
+void s_lib_free_errors() {
+  s_lib_error_t *cur, *tmp;
+  
+  cur = s_lib_error_top;
+  while (cur != NULL) {
+    tmp = cur;
+    cur = cur->next;
+    
+    s_free(tmp);
+  }
+}
+
 
 void s_lib_addFreeFunc(s_lib_callback_ptr callback) {
   s_lib_cb_t *last;
@@ -91,6 +103,8 @@ void s_lib_addFreeFunc(s_lib_callback_ptr callback) {
 void s_lib_free() {
   s_lib_cb_t *cur, *tmp;
 
+  s_lib_free_errors();
+  
   if (s_lib_callback_top == NULL) return;
 
   cur = s_lib_callback_top;

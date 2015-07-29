@@ -76,7 +76,9 @@ int SakuraObj_time2step(SakuraObj *skr, int mes, int beat, int tick);
 
 #define K_WARN_VAR_NOT_DEFINE 0x2100
 
-char *SakuraObj_getErrorMsg(int errno, char *buf);
+#define K_ERR_BUFSIZE 4096
+
+char *SakuraObj_getErrorMsg(int errno, char *buf, int size);
 SString *SakuraObj_getPosInfo(SakuraObj *skr, const char *pos);
 
 /** error */

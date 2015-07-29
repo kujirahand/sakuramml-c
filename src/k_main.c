@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file k_main.c
  *
  * @date Created on: 2014/09/29
@@ -361,7 +361,7 @@ SString *SakuraObj_getPosInfo(SakuraObj *skr, const char *pos) {
  */
 void SakuraObj_error(SakuraObj *skr, int errorno, const char *msg, const char *near, const char *file, int lineno) {
   SString *s;
-  char buf[1024];
+  char buf[K_ERR_BUFSIZE];
   SString *fi;
 
   if (skr->error_count > 20) return;
@@ -370,16 +370,18 @@ void SakuraObj_error(SakuraObj *skr, int errorno, const char *msg, const char *n
   s = SString_new(NULL);
   k_main_get_near_str(s, near);
 
-  if (skr == NULL) {
+  if (skr != NULL) {
     skr->error_stop = S_TRUE;
   }
   // get error file info
   fi = SakuraObj_getPosInfo(skr, near);
   
+  SakuraObj_getErrorMsg(errorno, buf, K_ERR_BUFSIZE);
+  
   // show error
   fprintf(stderr,
     "[%s] %s { %s } (%s)(%s:%d)\n",
-    SakuraObj_getErrorMsg(errorno, buf),
+	buf,
     msg,
     s->ptr,
     fi->ptr,
@@ -415,16 +417,17 @@ void SakuraObj_warn(SakuraObj *skr, int errorno, const char *msg, const char *ne
   SString_free(s);
 }
 
-char *SakuraObj_getErrorMsg(int errno, char *buf) {
-  switch (errno) {
-    case K_ERROR_SYSTEM:      strcpy(buf, "K_ERROR_SYSTEM"); return buf;
-    case K_ERROR_SYNTAX:      strcpy(buf, "K_ERROR_SYNTAX"); return buf;
-    case K_ERROR_FILE_READ:   strcpy(buf, "K_ERROR_FILE_READ"); return buf;
-    case K_ERROR_LOOP_RANGE:  strcpy(buf, "K_ERROR_LOOP_RANGE"); return buf;
-    case K_ERROR_FILE_WRITE:  strcpy(buf, "K_ERROR_FILE_WRITE"); return buf;
-    case K_ERROR_ARG_COUNT:   strcpy(buf, "K_ERROR_ARG_COUNT"); return buf;
+char *SakuraObj_getErrorMsg(int errno, char *buf, int len) {
+
+	switch (errno) {
+    case K_ERROR_SYSTEM:      s_strlcpy(buf, "K_ERROR_SYSTEM", len-1); return buf;
+    case K_ERROR_SYNTAX:      s_strlcpy(buf, "K_ERROR_SYNTAX", len-1); return buf;
+    case K_ERROR_FILE_READ:   s_strlcpy(buf, "K_ERROR_FILE_READ", len-1); return buf;
+    case K_ERROR_LOOP_RANGE:  s_strlcpy(buf, "K_ERROR_LOOP_RANGE", len-1); return buf;
+    case K_ERROR_FILE_WRITE:  s_strlcpy(buf, "K_ERROR_FILE_WRITE", len-1); return buf;
+    case K_ERROR_ARG_COUNT:   s_strlcpy(buf, "K_ERROR_ARG_COUNT", len-1); return buf;
   }
-  strcpy(buf, "K_ERROR_UNKNOWN");
+  s_strlcpy(buf, "K_ERROR_UNKNOWN", len-1);
   return buf;
 }
 

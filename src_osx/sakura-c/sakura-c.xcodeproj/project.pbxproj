@@ -110,7 +110,7 @@
 		B928F42F1B67CA7800DA3662 /* s_value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = s_value.h; path = ../../src/s_value.h; sourceTree = "<group>"; };
 		B928F4301B67CA7800DA3662 /* sakura.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sakura.c; path = ../../src/sakura.c; sourceTree = "<group>"; };
 		B928F4311B67CA7800DA3662 /* sakura.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sakura.h; path = ../../src/sakura.h; sourceTree = "<group>"; };
-		B95183A81AA3D2B600AEED50 /* sakura-c */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "sakura-c"; path = "/Users/kujira/repos/sakuramml-c/src_osx/sakura-c/build/Debug/sakura-c"; sourceTree = "<absolute>"; };
+		B94B589E1B691A19003CC3AE /* sakura-c */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sakura-c"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +184,7 @@
 				B928F42F1B67CA7800DA3662 /* s_value.h */,
 				B928F4301B67CA7800DA3662 /* sakura.c */,
 				B928F4311B67CA7800DA3662 /* sakura.h */,
+				B94B589E1B691A19003CC3AE /* sakura-c */,
 			);
 			sourceTree = "<group>";
 		};
@@ -204,7 +205,7 @@
 			);
 			name = "sakura-c";
 			productName = "sakura-c";
-			productReference = B95183A81AA3D2B600AEED50 /* sakura-c */;
+			productReference = B94B589E1B691A19003CC3AE /* sakura-c */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
