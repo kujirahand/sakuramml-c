@@ -37,6 +37,7 @@ s_bool KRun_O(SakuraObj *skr, KToken *tok);
 s_bool KRun_Q(SakuraObj *skr, KToken *tok);
 s_bool KRun_V(SakuraObj *skr, KToken *tok);
 s_bool KRun_T(SakuraObj *skr, KToken *tok);
+s_bool KRun_H(SakuraObj *skr, KToken *tok);
 s_bool KRun_octaveUD(SakuraObj *skr, KToken *tok);
 s_bool KRun_loopBegin(SakuraObj *skr, KToken *tok);
 s_bool KRun_loopEnd(SakuraObj *skr, KToken *tok);

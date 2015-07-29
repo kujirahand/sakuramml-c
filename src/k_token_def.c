@@ -18,6 +18,7 @@ char *KTokenDef_toString(int n) {
   if (n==0x0022) { return "KTOKEN_COMMAND_Q"; }
   if (n==0x0023) { return "KTOKEN_COMMAND_V"; }
   if (n==0x0024) { return "KTOKEN_COMMAND_T"; }
+  if (n==0x0025) { return "KTOKEN_COMMAND_H"; }
   if (n==0x0030) { return "KTOKEN_OCTAVE_UD"; }
   if (n==0x0031) { return "KTOKEN_LOOP_BEGIN"; }
   if (n==0x0032) { return "KTOKEN_LOOP_END"; }

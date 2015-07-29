@@ -53,6 +53,7 @@ s_bool KParser_readCommandO(SakuraObj *skr, KFile *file);
 s_bool KParser_readCommandQ(SakuraObj *skr, KFile *file);
 s_bool KParser_readCommandT(SakuraObj *skr, KFile *file);
 s_bool KParser_readCommandV(SakuraObj *skr, KFile *file);
+s_bool KParser_readCommandH(SakuraObj *skr, KFile *file);
 s_bool KParser_readOctaveCommand(SakuraObj *skr, KFile *file);
 s_bool KParser_readSplitter(SakuraObj *skr, KFile *file);
 s_bool KParser_readLoop(SakuraObj *skr, KFile *file);

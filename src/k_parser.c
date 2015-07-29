@@ -160,6 +160,7 @@ s_bool KParser_readLowerCommand(SakuraObj *skr, KFile *file) {
     case 'o': return KParser_readCommandO(skr, file);
     case 'p': return KParser_pitchBend(skr, file);
     case 'q': return KParser_readCommandQ(skr, file);
+    case 'h': return KParser_readCommandH(skr, file);
     case 't': return KParser_readCommandT(skr, file);
     case 'v': return KParser_readCommandV(skr, file);
     case 'y': return KParser_readCC(skr, file);
@@ -613,6 +614,22 @@ s_bool KParser_readCommandQ(SakuraObj *skr, KFile *file) {
   t->value = KParser_readNum(skr, file);
   return S_TRUE;
 }
+
+s_bool KParser_readCommandH(SakuraObj *skr, KFile *file) {
+  KToken *t;
+  
+  if (*file->pos == 'h') file->pos++;
+  
+  t = KToken_new(KTOKEN_COMMAND_H, file->pos);
+  KFile_appendToken(file, t);
+  
+  // check flag
+  t->flag = KParser_readFlag(file);
+  // check num
+  t->value = KParser_readNum(skr, file);
+  return S_TRUE;
+}
+
 
 s_bool KParser_readCommandT(SakuraObj *skr, KFile *file) {
   KToken *t;

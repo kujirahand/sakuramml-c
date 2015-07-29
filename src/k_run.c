@@ -57,6 +57,7 @@ s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
       case KTOKEN_COMMAND_Q: res = KRun_Q(skr, tok); break;
       case KTOKEN_COMMAND_V: res = KRun_V(skr, tok); break;
       case KTOKEN_COMMAND_T: res = KRun_T(skr, tok); break;
+      case KTOKEN_COMMAND_H: res = KRun_H(skr, tok); break;
       case KTOKEN_OCTAVE_UD: res = KRun_octaveUD(skr, tok); break;
       case KTOKEN_LOOP_BEGIN: res = KRun_loopBegin(skr, tok); break;
       case KTOKEN_LOOP_END: res = KRun_loopEnd(skr, tok); break;
@@ -193,6 +194,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
     noteno = SValue_getInt(val);
     SValue_free(val);
   }
+  
   // ---------------------------
   // sharp & key shift
   sharp = tok->flag & 0xFF;
@@ -206,6 +208,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   noteno += skr->info->key;
   // track key
   noteno += tr->track_key;
+  
   // ---------------------------
   // length
   if (tok->value != NULL) {
@@ -214,7 +217,8 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
     len = l;
   }
   
-  // calc qlen
+  // ---------------------------
+  // qlen
   if (tr->q_step_mode) {
     qlen = q;
   } else {
@@ -256,6 +260,9 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
       t += opt->t;
       break;
   }
+  
+  // minus 'h' param
+  qlen -= tr->h;
   
   // v.onNote
   if (tr->v_onNote->len > 0) {
@@ -408,6 +415,16 @@ s_bool KRun_T(SakuraObj *skr, KToken *tok) {
   
   return S_TRUE;
 }
+
+s_bool KRun_H(SakuraObj *skr, KToken *tok) {
+  KTrack *tr;
+  
+  tr = SakuraObj_curTrack(skr);
+  tr->h = KRun_cmd_value(tok, tr->h);
+  
+  return S_TRUE;
+}
+
 
 /**
  * Calc n's style note length

@@ -19,6 +19,7 @@ typedef struct {
   int t;            /// timing
   int q;            /// gate rate
   s_bool q_step_mode;/// gate step mode
+  int h;            /// gate minus step
   int l;            /// step
   int Voice;        /// Voice (Default=0)
   int Port;         /// Port (Default=0)
