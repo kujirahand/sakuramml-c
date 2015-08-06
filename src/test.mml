@@ -1,7 +1,13 @@
 
+Track(0) Channel(1)
+Voice(1)//チャンネルの１番に、音色の１番(ピアノ)を設定。
+l4 o5 cdefgfedcegec1
 
-l4 q100 h0 cg
-l4 q100 h1 cg
+Track(1) Channel(2)
+Voice(33)//チャンネルの２番に、音色の33番(ベース)を設定。
+l4 o3 ccccccccccccc1
+
+
 
 
 
