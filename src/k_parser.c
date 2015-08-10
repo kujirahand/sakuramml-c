@@ -457,6 +457,8 @@ s_bool KParser_readNoteOnNo(SakuraObj *skr, KFile *file) {
   file->pos++; // skip 'n'
   // Token
   t = KToken_new(KTOKEN_NOTE_NO, file->pos);
+  t->extra = KTokenNoteOnOption_new();
+  t->free_f = KTokenNoteOnOption_free;
   KFile_appendToken(file, t);
   // Read Note No
   t->arg = KParser_readValue(skr, file);
