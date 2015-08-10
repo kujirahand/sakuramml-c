@@ -11,7 +11,10 @@
 
 * Raspberry Piでの音楽制作環境を整える
 
-MIDIファイルが再生できるように、timidityをインストールします。コマンドラインから以下のコマンドを実行しましょう。
+最新のRaspbianでは、timidityがインストールされています。
+古いRaspbianを利用している場合には、timidityのインストールが必要です。
+
+もし、timidityがインストールされてなければ、MIDIファイルが再生できるように、timidityをインストールします。コマンドラインから以下のコマンドを実行しましょう。
 
 {{{
 sudo apt-get install timidity 
@@ -64,7 +67,20 @@ pico hana.mml
 timidity hana.mid
 }}}
 
+----------------------------------------------------------------
 
+* C言語のソースからインストールする場合
+
+
+{{{
+# ctagsが必要です（暫定ですが)
+$ sudo apt-get install ctags
+
+# GitHubからソースコード一式をダウンロードします
+$ git clone https://github.com/kujirahand/sakuramml-c
+$ cd sakuramml-c
+$ make
+}}}
 
 
 

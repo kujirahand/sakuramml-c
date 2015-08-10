@@ -62,6 +62,7 @@ s_bool KParser_readCC2(SakuraObj *skr, KFile *file, KToken *cno);
 s_bool KParser_readSharpMacro(SakuraObj *skr, KFile *file);
 s_bool KParser_rpn(SakuraObj *skr, KFile *file);
 s_bool KParser_nrpn(SakuraObj *skr, KFile *file);
+s_bool KParser_voice(SakuraObj *skr, KFile *file);
 
 s_bool KParser_track(SakuraObj *skr, KFile *file);
 s_bool KParser_channel(SakuraObj *skr, KFile *file);

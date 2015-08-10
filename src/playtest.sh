@@ -1,6 +1,5 @@
 #!/bin/bash
-#./sakura test.mml test.mid
-./sakura
+./sakurac test.mml
 timidity test.mid
 
 

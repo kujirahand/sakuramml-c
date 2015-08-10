@@ -94,7 +94,9 @@ void KParser_appendCommand(SHash *hash) {
   SHash_set(hash, "SYSEX", KParser_sysex);
   SHash_set(hash, "SysEx$", KParser_sysex_hex);
   SHash_set(hash, "SYSEX$", KParser_sysex_hex);
-  // RPN/NRPN
+  // PC/RPN/NRPN
+  SHash_set(hash, "Voice", KParser_voice);
+  SHash_set(hash, "VOICE", KParser_voice);
   SHash_set(hash, "RPN", KParser_rpn);
   SHash_set(hash, "NRPN", KParser_nrpn);
   // CC
@@ -1335,16 +1337,8 @@ s_bool KParser_include(SakuraObj *skr, KFile *file) {
 }
 
 s_bool KParser_readVoice(SakuraObj *skr, KFile *file) {
-  KToken *t, *arg;
-
   file->pos++; // skip '@'
-  t = KToken_new(KTOKEN_PROGRAM, file->pos);
-  arg = KParser_readValueList(skr, file);
-  t->arg = arg;
-  t->no = KToken_count(t->arg);
-  KFile_appendToken(file, t);
-
-  return S_TRUE;
+  return KParser_voice(skr, file);
 }
 
 s_bool KParser_backslash(SakuraObj *skr, KFile *file) {
@@ -2414,4 +2408,19 @@ s_bool KParser_timekeyflag(SakuraObj *skr, KFile *file) {
   }
   return S_TRUE;
 }
+
+s_bool KParser_voice(SakuraObj *skr, KFile *file) {
+  KToken *t, *arg;
+  
+  t = KToken_new(KTOKEN_PROGRAM, file->pos);
+  arg = KParser_readValueList(skr, file);
+  t->arg = arg;
+  t->no = KToken_count(t->arg);
+  KFile_appendToken(file, t);
+
+  return S_TRUE;
+}
+
+
+
 

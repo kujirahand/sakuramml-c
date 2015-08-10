@@ -1,6 +1,6 @@
 
 Track(0) Channel(1)
-Voice(1)//チャンネルの１番に、音色の１番(ピアノ)を設定。
+@(80)//チャンネルの１番に、音色の１番(ピアノ)を設定。
 l4 o5 cdefgfedcegec1
 
 Track(1) Channel(2)

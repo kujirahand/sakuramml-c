@@ -28,8 +28,8 @@ opt_lm=$opt_lm
 objs=$obj_s
 # ---
 # make sakura
-sakura: \$(objs)
-	$(cc) $(opt_lm) -o sakura $(objs)
+sakurac: \$(objs)
+	$(cc) $(opt_lm) -o sakurac $(objs)
 	ctags *.c *.h
 # ---
 # every object
@@ -37,11 +37,11 @@ $def_s
 # ---
 .PHONY:clean
 clean:
-	rm -f sakura $(objs)
+	rm -f sakurac $(objs)
 	rm -f tags
 # ---
 .PHONY: all
-all: sakura
+all: sakurac
 
 EOS;
 

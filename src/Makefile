@@ -6,8 +6,8 @@ opt_lm=-lm -Wall -O2 -g
 objs=k_fomatter.o k_function.o k_main.o k_parser.o k_parser_test.o k_run.o k_run_test.o k_smf.o k_smf_test.o k_smf_writer.o k_sutoton.o k_sutoton_test.o k_test.o k_token.o k_token_def.o k_track.o s_hash.o s_hook_memory.o s_hook_memory_test.o s_lib.o s_list.o s_list_test.o s_str.o s_str_test.o s_stream.o s_stream_test.o s_test.o s_value.o s_value_test.o sakura.o
 # ---
 # make sakura
-sakura: $(objs)
-	$(cc) $(opt_lm) -o sakura $(objs)
+sakurac: $(objs)
+	$(cc) $(opt_lm) -o sakurac $(objs)
 	ctags *.c *.h
 # ---
 # every object
@@ -74,8 +74,8 @@ sakura.o:sakura.c sakura.h
 # ---
 .PHONY:clean
 clean:
-	rm -f sakura $(objs)
+	rm -f sakurac $(objs)
 	rm -f tags
 # ---
 .PHONY: all
-all: sakura
+all: sakurac
