@@ -78,7 +78,7 @@ $ sudo apt-get install ctags
 
 # GitHubからソースコード一式をダウンロードします
 $ git clone https://github.com/kujirahand/sakuramml-c
-$ cd sakuramml-c
+$ cd sakuramml-c/src
 $ make
 }}}
 

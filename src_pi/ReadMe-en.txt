@@ -43,3 +43,16 @@ play it with timidity.
 timidity hana.mid
 }}}
 
+* How to build from source code ?
+
+{{{
+# You need ctags (Interim)
+$ sudo apt-get install ctags
+
+# Download source code from GitHub
+$ git clone https://github.com/kujirahand/sakuramml-c
+$ cd sakuramml-c/src
+$ make
+}}}
+
+
