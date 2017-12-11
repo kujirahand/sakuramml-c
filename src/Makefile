@@ -3,7 +3,7 @@
 cc=gcc
 opt=-Wall -O2 -g
 opt_lm=-lm -Wall -O2 -g
-objs=k_fomatter.o k_function.o k_main.o k_parser.o k_parser_test.o k_run.o k_run_test.o k_smf.o k_smf_test.o k_smf_writer.o k_sutoton.o k_sutoton_test.o k_test.o k_token.o k_token_def.o k_track.o s_hash.o s_hook_memory.o s_hook_memory_test.o s_lib.o s_list.o s_list_test.o s_str.o s_str_test.o s_stream.o s_stream_test.o s_test.o s_value.o s_value_test.o sakura.o
+objs=k_fomatter.o k_function.o k_main.o k_parser.o k_parser_test.o k_run.o k_run_test.o k_smf.o k_smf_test.o k_smf_writer.o k_sutoton.o k_sutoton_test.o k_test.o k_token.o k_token_def.o k_track.o s_file.o s_hash.o s_hook_memory.o s_hook_memory_test.o s_lib.o s_list.o s_list_test.o s_str.o s_str_test.o s_stream.o s_stream_test.o s_test.o s_value.o s_value_test.o sakura.o
 # ---
 # make sakura
 sakurac: $(objs)
@@ -43,6 +43,8 @@ k_token_def.o:k_token_def.c k_token_def.h
 	$(cc) $(opt) -c k_token_def.c
 k_track.o:k_track.c k_track.h
 	$(cc) $(opt) -c k_track.c
+s_file.o:s_file.c s_file.h
+	$(cc) $(opt) -c s_file.c
 s_hash.o:s_hash.c s_hash.h
 	$(cc) $(opt) -c s_hash.c
 s_hook_memory.o:s_hook_memory.c s_hook_memory.h

@@ -25,7 +25,7 @@
 
 // forward def
 void SakuraObj_initTokenPos(SakuraObj *skr, KFile *file);
-void SakuraObj_addFile(SakuraObj *skr, KFile *file); 
+void SakuraObj_addFile(SakuraObj *skr, KFile *file);
 s_bool k_main_valueStack_freeItem(void *ptr);
 s_bool k_main_varialbe_freeItem(const char *key, void *value);
 s_bool k_main_func_freeItem(const char *key, void *value);
@@ -51,7 +51,7 @@ s_bool Sakura_mml2smf(const char* infile, const char* outfile, SakuraCommandOpt 
     SakuraObj_run(skr, file);
     // printf("- End of Include: %s\n", stdmsg_h);
   }
-  
+
   // load main file
   if (skr->debug) {
     printf("- load file: %s\n", infile);
@@ -135,9 +135,9 @@ SakuraObj *SakuraObj_new() {
   skr->print_buf = SString_new(NULL);
   skr->use_print_console = S_FALSE;
   // Tracks
-  skr->tracks = KTrackList_new(skr->info); 
+  skr->tracks = KTrackList_new(skr->info);
   skr->smf = KSmfTrackList_new();
-  
+
   // Stack for Loop
   skr->loopStack = SList_new();
   skr->valueStack = SList_new();
@@ -146,10 +146,10 @@ SakuraObj *SakuraObj_new() {
   // Command hash
   skr->command_hash = SHash_new(0);
   KParser_appendCommand(skr->command_hash);
-  
+
   skr->sutoton = KSutotonList_new();
   skr->rhythm = s_new_a(char*, 256);
-  
+
   // Variables
   skr->variables = SHash_new(0);
   skr->variables->callback_free_item = k_main_varialbe_freeItem;
@@ -159,7 +159,7 @@ SakuraObj *SakuraObj_new() {
   skr->local_vars = SHash_new(0);
   skr->local_vars->callback_free_item = k_main_varialbe_freeItem;
   skr->is_local = S_FALSE;
-    
+
   return skr;
 }
 
@@ -175,7 +175,7 @@ s_bool k_main_varialbe_freeItem(const char *key, void *value) {
 void SakuraObj_free(SakuraObj *skr) {
   char *p;
   int i;
-  
+
   KFile_freeAll(skr->file_top);
   SStringList_free(skr->errors);
   KTrackList_free(skr->tracks);
@@ -200,11 +200,11 @@ void SakuraObj_free(SakuraObj *skr) {
 
 s_bool k_main_valueStack_freeItem(void *ptr) {
   SValue *v;
-  
+
   v = (SValue*)ptr;
   if (v == NULL) return S_TRUE;
   SValue_free(v);
-  
+
   return S_TRUE;
 }
 
@@ -212,12 +212,12 @@ s_bool k_main_valueStack_freeItem(void *ptr) {
 /** initialize token status in KFile object */
 void SakuraObj_initTokenPos(SakuraObj *skr, KFile *file) {
   KToken *t;
-  
+
   // check double
   if (file->token_top != NULL) {
     return;
   }
-  
+
   // trim comment
   KFormatter_trimComment(file->source);
   // sutoton
@@ -228,9 +228,9 @@ void SakuraObj_initTokenPos(SakuraObj *skr, KFile *file) {
     printf("SUTOTON=%s\n----\n", file->source->ptr);
   }
   */
-  
+
   // set top token
-  file->pos = file->source->ptr; 
+  file->pos = file->source->ptr;
   t = KToken_new(KTOKEN_TOP, file->pos);
   file->token_top = file->token_cur = t;
 }
@@ -246,7 +246,7 @@ void SakuraObj_addFile(SakuraObj *skr, KFile *file) {
     while (f->next != NULL) f = f->next;
     f->next = file;
   }
- 
+
   // set topken top
   SakuraObj_initTokenPos(skr, file);
 }
@@ -255,7 +255,7 @@ void SakuraObj_addFile(SakuraObj *skr, KFile *file) {
  * load from source string
  * @param *obj
  * @param *src soruce string
- * @return file object 
+ * @return file object
  */
 KFile *SakuraObj_loadString(SakuraObj *skr, const char *src) {
   KFile *file;
@@ -290,7 +290,7 @@ KFile *SakuraObj_loadFromFile(SakuraObj *skr, const char *filename) {
   str = SString_new(NULL);
   r = SString_load(str, filename);
   if (r == 0) {
-    k_error(skr, K_ERROR_FILE_READ, "Failed to load file", NULL);
+    k_error(skr, K_ERROR_FILE_READ, "Failed to load file", filename);
     SString_free(str);
     return NULL;
   }
@@ -315,7 +315,7 @@ SString *k_main_get_near_str(SString *s, const char *near) {
     SString_set(s, r->ptr);
     SString_free(r);
   }
-  
+
   return s;
 }
 
@@ -324,7 +324,7 @@ SString *SakuraObj_getPosInfo(SakuraObj *skr, const char *pos) {
   char *p1, *p2, *p;
   int lno;
   if (skr == NULL) return res;
-  
+
   KFile *f = skr->file_top;
   while (f != NULL) {
     p1 = f->source->ptr;
@@ -346,7 +346,7 @@ SString *SakuraObj_getPosInfo(SakuraObj *skr, const char *pos) {
     }
     f = f->next;
   }
-  
+
   return res;
 }
 
@@ -366,7 +366,7 @@ void SakuraObj_error(SakuraObj *skr, int errorno, const char *msg, const char *n
 
   if (skr->error_count > 20) return;
   skr->error_count++;
-  
+
   s = SString_new(NULL);
   k_main_get_near_str(s, near);
 
@@ -375,9 +375,9 @@ void SakuraObj_error(SakuraObj *skr, int errorno, const char *msg, const char *n
   }
   // get error file info
   fi = SakuraObj_getPosInfo(skr, near);
-  
+
   SakuraObj_getErrorMsg(errorno, buf, K_ERR_BUFSIZE);
-  
+
   // show error
   fprintf(stderr,
     "[%s] %s { %s } (%s)(%s:%d)\n",
@@ -400,7 +400,7 @@ void SakuraObj_warn(SakuraObj *skr, int errorno, const char *msg, const char *ne
   s = SString_new(NULL);
   SString_append(s, msg);
   k_main_get_near_str(s, near);
-  
+
   // TODO: エラーメッセージを正しく出す
   if (skr == NULL) {
     // skr->errosに追加する
@@ -474,7 +474,7 @@ int SakuraObj_time2step(SakuraObj *skr, int mes, int beat, int tick) {
 
   KSongInfo *i = skr->info;
   int base, result;
-  
+
   // memo:
   // if 4/4
   // (mes-1)*(timebase*4) + (beat-1)*timebase + tick
@@ -484,15 +484,9 @@ int SakuraObj_time2step(SakuraObj *skr, int mes, int beat, int tick) {
   // (mes-1)*(base*6) + (beat-1)*base + tick
 
   mes += skr->info->measureShift;
-  
+
   base = i->timebase * 4 / i->timeSig_deno;
   result = (mes - 1) * (base * i->timeSig_nume) + (beat - 1) * base + tick;
-  
+
   return result;
 }
-
-
-
-
-
-

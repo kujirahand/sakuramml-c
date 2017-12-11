@@ -1,5 +1,6 @@
 #!/bin/bash
-./sakurac test.mml
+make
+./sakurac -debug test.mml
 timidity test.mid
 
 
