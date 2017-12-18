@@ -10,6 +10,7 @@
 
 typedef s_bool (*KRun_Command)(SakuraObj *skr, KToken *tok);
 
+s_bool KRun_NOP(SakuraObj *skr, KToken *tok);
 
 s_bool KRun_runFile(SakuraObj *skr, KFile *file);
 s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top);
@@ -44,7 +45,7 @@ s_bool KRun_loopEnd(SakuraObj *skr, KToken *tok);
 s_bool KRun_loopBreak(SakuraObj *skr, KToken *tok);
 s_bool KRun_track(SakuraObj *skr, KToken *tok);
 s_bool KRun_channel(SakuraObj *skr, KToken *tok);
-s_bool KRun_program(SakuraObj *skr, KToken *tok); 
+s_bool KRun_program(SakuraObj *skr, KToken *tok);
 s_bool KRun_CC(SakuraObj *skr, KToken *tok);
 s_bool KRun_rpn(SakuraObj *skr, KToken *tok);
 s_bool KRun_nrpn(SakuraObj *skr, KToken *tok);
@@ -90,6 +91,9 @@ s_bool KRun_vAdd(SakuraObj *skr, KToken *tok);
 s_bool KRun_sharp_macro_define(SakuraObj *skr, KToken *tok);
 s_bool KRun_sharp_macro_exec(SakuraObj *skr, KToken *tok);
 s_bool KRun_playFrom(SakuraObj *skr, KToken *tok);
+s_bool KRun_playBegin(SakuraObj *skr, KToken *tok);
+s_bool KRun_playEnd(SakuraObj *skr, KToken *tok);
+s_bool KRun_playTrack(SakuraObj *skr, KToken *tok);
 s_bool KRun_CCUpper(SakuraObj *skr, KToken *tok);
 s_bool KRun_array_element(SakuraObj *skr, KToken *tok);
 s_bool KRun_var_replace(SakuraObj *skr, KToken *tok);
@@ -111,4 +115,3 @@ s_bool KRun_strtonum_r(SakuraObj *skr, KToken *tok);
 s_bool KRun_NoteNo_r(SakuraObj *skr, KToken *tok);
 
 #endif /* __k_run_h__ */
-

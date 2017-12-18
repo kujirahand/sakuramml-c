@@ -24,6 +24,8 @@ typedef struct {
   int tempo;
   int keyflag[7];   // for KeyFlag
   int timeTrackSync; // for TrackSync
+  int play_temp_track;
+  int play_temp_time;
 } KSongInfo;
 
 

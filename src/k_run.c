@@ -48,7 +48,7 @@ s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
       // TODO: KRun_runTokenList switch
       case KTOKEN_UNKNOWN:
       case KTOKEN_TOP:
-      case KTOKEN_NOP: break;
+      case KTOKEN_NOP: KRun_NOP(skr, tok); break;
       case KTOKEN_NOTE: res = KRun_NoteOn(skr, tok); break;
       case KTOKEN_NOTE_NO: res = KRun_NoteOn(skr, tok); break;
       case KTOKEN_REST: res = KRun_Rest(skr, tok); break;
@@ -126,6 +126,9 @@ s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
       case KTOKEN_DEC: KRun_pushValue(skr, SValue_newInt(KRun_popInt(skr) - 1)); break;
       case KTOKEN_ARRAY_ELEMENT: res = KRun_array_element(skr, tok); break;
       case KTOKEN_VAR_REPLACE: res = KRun_var_replace(skr, tok); break;
+      case KTOKEN_PLAY_BEGIN: res = KRun_playBegin(skr, tok); break;
+      case KTOKEN_PLAY_END: res = KRun_playEnd(skr, tok); break;
+      case KTOKEN_PLAY_TRACK: res = KRun_playTrack(skr, tok); break;
       default:
         printf("[ERROR] (Runtime) unknown 0x%x\n", tok->token_type);
         break;
@@ -156,6 +159,42 @@ s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
 s_bool KRun_runFile(SakuraObj *skr, KFile *file) {
   KToken *tok = file->token_top;
   return KRun_runTokenList(skr, tok);
+}
+
+s_bool KRun_NOP(SakuraObj *skr, KToken *tok) {
+  if (!skr->debug) return S_TRUE;
+  if (tok->value != NULL) {
+    printf("[NOP] %s\n", tok->value->ptr);
+  } else {
+    printf("[NOP]\n");
+  }
+  return S_TRUE;
+}
+
+s_bool KRun_playBegin(SakuraObj *skr, KToken *tok) {
+  KTrack *cur = SakuraObj_curTrack(skr);
+  skr->info->play_temp_track = skr->info->track_no;
+  skr->info->play_temp_time = cur->time;
+  return S_TRUE;
+}
+s_bool KRun_playEnd(SakuraObj *skr, KToken *tok) {
+  skr->info->track_no = skr->info->play_temp_track;
+  return S_TRUE;
+}
+s_bool KRun_playTrack(SakuraObj *skr, KToken *tok) {
+  int no;
+  KTrack *tr;
+  //
+  KRun_evalTokenList(skr, tok->arg);
+  no = KRun_popInt(skr);
+  skr->info->track_no = SET_IN_RANGE(1, 256, no);
+  tr = SakuraObj_curTrack(skr);
+  tr->time = skr->info->play_temp_time;
+  //
+  if (skr->debug) {
+    printf("[TR=%d](PLAY)", skr->info->track_no);
+  }
+  return S_TRUE;
 }
 
 s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {

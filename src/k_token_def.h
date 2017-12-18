@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   k_token_def.h
  * Author: kujira
  *
@@ -108,6 +108,9 @@
 #define KTOKEN_SHARP_MACRO_DEFINE 0x2109
 #define KTOKEN_SHARP_MACRO_EXEC   0x210A
 #define KTOKEN_VAR_REPLACE    0x210B
+#define KTOKEN_PLAY_BEGIN   0x210C
+#define KTOKEN_PLAY_END     0x210D
+#define KTOKEN_PLAY_TRACK   0x210E
 
 #define KTOKEN_GOTO           0x2110
 #define KTOKEN_GOTO_IF_TRUE   0x2111
@@ -125,4 +128,3 @@
 char *KTokenDef_toString(int n);
 
 #endif	/* K_TOKEN_DEF_H */
-

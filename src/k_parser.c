@@ -2295,9 +2295,16 @@ s_bool KParser_trackSub(SakuraObj *skr, KFile *file) {
 }
 
 s_bool KParser_play(SakuraObj *skr, KFile *file) {
-  KToken *tr, *t;
+  KToken *nop, *tr, *t;
   s_bool flag_paren = S_FALSE;
   int track_no = 1;
+  // nop
+  nop = KToken_new(KTOKEN_TOP, file->pos);
+  nop->value = SString_new("PLAY");
+  KFile_appendToken(file, nop);
+  // add KTOKEN_PLAY_BEGIN
+  t = KToken_new(KTOKEN_PLAY_BEGIN, file->pos);
+  KFile_appendToken(file, t);
   //
   SKIP_SPACE(file->pos);
   // skip '('
@@ -2308,7 +2315,7 @@ s_bool KParser_play(SakuraObj *skr, KFile *file) {
   //
   while (*file->pos != '\0') {
     // TR(track_no)
-    tr = KToken_new(KTOKEN_TRACK, file->pos);
+    tr = KToken_new(KTOKEN_PLAY_TRACK, file->pos);
     tr->arg = KToken_new(KTOKEN_NUMBER, file->pos);
     tr->arg->no = track_no++;
     KFile_appendToken(file, tr);
@@ -2329,7 +2336,7 @@ s_bool KParser_play(SakuraObj *skr, KFile *file) {
     }
     // have next value?
     SKIP_SPACE(file->pos);
-    if (*file->pos == ',') {
+    if (*file->pos == ',' || *file->pos == ';') {
       file->pos++;
       continue;
     }
@@ -2339,6 +2346,8 @@ s_bool KParser_play(SakuraObj *skr, KFile *file) {
   if (flag_paren && *file->pos == ')') {
     file->pos++;    
   }
+  t = KToken_new(KTOKEN_PLAY_END, file->pos);
+  KFile_appendToken(file, t);
   //
   return S_TRUE;
 }

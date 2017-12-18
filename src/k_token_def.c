@@ -92,6 +92,9 @@ char *KTokenDef_toString(int n) {
   if (n==0x2109) { return "KTOKEN_SHARP_MACRO_DEFINE"; }
   if (n==0x210A) { return "KTOKEN_SHARP_MACRO_EXEC"; }
   if (n==0x210B) { return "KTOKEN_VAR_REPLACE"; }
+  if (n==0x210C) { return "KTOKEN_PLAY_BEGIN"; }
+  if (n==0x210D) { return "KTOKEN_PLAY_END"; }
+  if (n==0x210E) { return "KTOKEN_PLAY_TRACK"; }
   if (n==0x2110) { return "KTOKEN_GOTO"; }
   if (n==0x2111) { return "KTOKEN_GOTO_IF_TRUE"; }
   if (n==0x2112) { return "KTOKEN_GOTO_IF_FALSE"; }

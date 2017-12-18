@@ -1,6 +1,9 @@
 Int Ocarina=80;
 Int DrawbarOrgan=30;
 
+cde
+PRINT(TIME)
+
 Str A1 = {l4cdef}
 Str B1 = {l4efga}
 #C1 = {l4gab`c}
