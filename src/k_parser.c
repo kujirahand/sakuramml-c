@@ -51,6 +51,8 @@ void KParser_appendCommand(SHash *hash) {
   SHash_set(hash, "Sub", KParser_trackSub);
   SHash_set(hash, "SUB", KParser_trackSub);
   SHash_set(hash, "S",   KParser_trackSub);
+  SHash_set(hash, "Play", KParser_play);
+  SHash_set(hash, "PLAY", KParser_play);
   // Script variable
   SHash_set(hash, "Int", KParser_int);
   SHash_set(hash, "INT", KParser_int);
@@ -2291,6 +2293,56 @@ s_bool KParser_trackSub(SakuraObj *skr, KFile *file) {
   //
   return S_TRUE;
 }
+
+s_bool KParser_play(SakuraObj *skr, KFile *file) {
+  KToken *tr, *t;
+  s_bool flag_paren = S_FALSE;
+  int track_no = 1;
+  //
+  SKIP_SPACE(file->pos);
+  // skip '('
+  if (*file->pos == '(') {
+    file->pos++;
+    flag_paren = S_TRUE;
+  }
+  //
+  while (*file->pos != '\0') {
+    // TR(track_no)
+    tr = KToken_new(KTOKEN_TRACK, file->pos);
+    tr->arg = KToken_new(KTOKEN_NUMBER, file->pos);
+    tr->arg->no = track_no++;
+    KFile_appendToken(file, tr);
+    SKIP_SPACE(file->pos);
+    // contents
+    if (*file->pos == '{') {
+      t = KToken_new(KTOKEN_TOP, file->pos);
+      t->value = KParser_readString(skr, file);
+      t->arg = KParser_parseString(skr, t->value->ptr, t->pos);
+      t->b_arg_free = S_FALSE;
+      KFile_appendToken(file, t); 
+    }
+    else if (*file->pos == '#') {
+      KParser_readSharpMacro(skr, file);
+    }
+    else if (IN_RANGE('A', 'Z', *file->pos) || *file->pos == '_') {
+      KParser_readUpperCommand(skr, file);
+    }
+    // have next value?
+    SKIP_SPACE(file->pos);
+    if (*file->pos == ',') {
+      file->pos++;
+      continue;
+    }
+    break;
+  }
+  // skip ')'
+  if (flag_paren && *file->pos == ')') {
+    file->pos++;    
+  }
+  //
+  return S_TRUE;
+}
+
 
 s_bool KParser_readSharpMacro(SakuraObj *skr, KFile *file) {
   char *tmp;

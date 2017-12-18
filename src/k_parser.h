@@ -105,6 +105,7 @@ s_bool KParser_trackSub(SakuraObj *skr, KFile *file);
 s_bool KParser_playFrom(SakuraObj *skr, KFile *file);
 s_bool KParser_playFromNow(SakuraObj *skr, KFile *file);
 s_bool KParser_timekeyflag(SakuraObj *skr, KFile *file);
+s_bool KParser_play(SakuraObj *skr, KFile *file);
 
 // Control Change
 s_bool KParser_readCCUpper(SakuraObj *skr, KFile *file, int ccno);

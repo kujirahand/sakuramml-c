@@ -1,6 +1,11 @@
 Int Ocarina=80;
 Int DrawbarOrgan=30;
-cde
+
+Str A1 = {l4cdef}
+Str B1 = {l4efga}
+#C1 = {l4gab`c}
+PLAY(A1,B1,#C1)
+
 /*
 トラック１　音色(Ocarina)
 音階6 音符８
