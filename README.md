@@ -1,7 +1,7 @@
 # sakuramml-c
 MML Compiler (Text to Midi Converter)
 
-[Web Site] http://oto.chu.jp/ (Japanese)
+[Web Site] https://sakuramml.com/ (Japanese)
 
 ---------------------
 
