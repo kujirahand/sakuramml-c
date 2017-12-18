@@ -1,3 +1,6 @@
+Int Ocarina=80;
+Int DrawbarOrgan=30;
+cde
 /*
 トラック１　音色(Ocarina)
 音階6 音符８
@@ -14,4 +17,4 @@
 [4 ずつたつ　ずずたつ ]
 ぱ
 */
-cde
+

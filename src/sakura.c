@@ -15,8 +15,10 @@
 void show_help() {
   printf("usage: sakurac [option] (infile) [outfile]\n");
   printf("options:\n");
-  printf("  -debug  # set debug mode\n");
-  printf("  -help   # show this help\n");
+  printf("  -debug    # set debug mode\n");
+  printf("  -nostdmsg # do not inclue stdmsg.h\n");
+  printf("  -test     # set test mode\n");
+  printf("  -help     # show this help\n");
 }
 
 int goTest() {
@@ -74,8 +76,14 @@ int gomml(int argc, char* argv[]) {
     p = argv[i];
     // check options
     if (*p == '-') {
+      // debug mode
       if (strcmp(p, "-debug") == 0 || strcmp(p, "--debug") == 0) {
         opt.is_debug = S_TRUE;
+        continue;
+      }
+      // stdmsg ?
+      if (strcmp(p, "-nostdmsg") == 0 || strcmp(p, "--nostdmsg") == 0) {
+        opt.include_stdmsg = S_FALSE;
         continue;
       }
       // test ?
@@ -97,7 +105,8 @@ int gomml(int argc, char* argv[]) {
       continue;
     }
     if (outfile == NULL) {
-      outfile = p;
+      outfile = s_malloc(strlen(p) + 5);
+      strcpy(outfile, p);
       continue;
     }
   }

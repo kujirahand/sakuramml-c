@@ -21,12 +21,12 @@ const int NOTE_TONE[7] = {
     // a b  c d e f g
        9,11,0,2,4,5,7
   };
-  
+
 /**
  * Run tokens
  * @param skr
  * @param file
- * @return 
+ * @return
  */
 s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
   s_bool result = S_TRUE, res = S_TRUE;
@@ -166,7 +166,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   char name;
   SValue *val;
   KTokenNoteOnOption *opt = (KTokenNoteOnOption*)tok->extra;
-  
+
   // default
   tr = SakuraObj_curTrack(skr);
   smf_tr = SakuraObj_curSmfTrack(skr);
@@ -176,7 +176,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   v = tr->v;
   t = tr->t;
   skr->info->octaveOnetime = 0;
-  
+
   // ---------------------------
   // note no
   if (tok->token_type == KTOKEN_NOTE) {
@@ -194,7 +194,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
     noteno = SValue_getInt(val);
     SValue_free(val);
   }
-  
+
   // ---------------------------
   // sharp & key shift
   sharp = tok->flag & 0xFF;
@@ -208,7 +208,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   noteno += skr->info->key;
   // track key
   noteno += tr->track_key;
-  
+
   // ---------------------------
   // length
   if (tok->value != NULL) {
@@ -216,7 +216,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   } else {
     len = l;
   }
-  
+
   // ---------------------------
   // qlen
   if (tr->q_step_mode) {
@@ -242,7 +242,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
       }
       break;
   }
-  
+
   switch (opt->v_mode) {
     case K_NOTEON_MODE_ABSOLUTE:
       v = opt->v;
@@ -251,7 +251,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
       v += opt->v;
       break;
   }
-  
+
   switch (opt->t_mode) {
     case K_NOTEON_MODE_ABSOLUTE:
       t = opt->t;
@@ -260,10 +260,10 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
       t += opt->t;
       break;
   }
-  
+
   // minus 'h' param
   qlen -= tr->h;
-  
+
   // v.onNote
   if (tr->v_onNote->len > 0) {
     val = SList_shift(tr->v_onNote);
@@ -293,9 +293,9 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
   e->data1 = noteno;
   e->data2 = v;
   KSmfTrack_append(smf_tr, e);
-  
+
   if (skr->debug) {
-    printf("%04d:(KRun_NoteOn note=%d(len=%d/%d,v%dt%d)\n", 
+    printf("%04d:(KRun_NoteOn note=%d(len=%d/%d,v%dt%d)\n",
       tr->time, noteno, qlen, len, v, t);
   }
 
@@ -303,7 +303,7 @@ s_bool KRun_NoteOn(SakuraObj *skr, KToken *tok) {
     // inc time
     tr->time += len;
   }
-  
+
   return S_TRUE;
 }
 
@@ -312,18 +312,18 @@ s_bool KRun_Rest(SakuraObj *skr, KToken *tok) {
   KTrack *tr = SakuraObj_curTrack(skr);
   int l = tr->l;
   int len;
-  
+
   // length
   len = KRun_calcNoteLen(tok->value->ptr, l, skr->info->timebase);
-  if (tok->flag == -1) len *= -1; 
+  if (tok->flag == -1) len *= -1;
   tr->time += len;
-  
+
   if (skr->debug) {
     printf("(KRun_Rest len=%d)", len);
   }
 
   // TODO: CC.onNote/.onTime
-  
+
   return S_TRUE;
 }
 
@@ -332,20 +332,20 @@ s_bool KRun_L(SakuraObj *skr, KToken *tok) {
   KTrack *tr = SakuraObj_curTrack(skr);
   int len;
   int tb;
-  
+
   // get length
   tb = skr->info->timebase;
   len = KRun_calcNoteLen(tok->value->ptr, tb, tb);
   // set new lengtth
   tr->l = len;
-  
+
   return S_TRUE;
 }
 
 int KRun_cmd_value(KToken *tok, int base) {
   char *p;
   int v;
-  
+
   if (tok == NULL || tok->value == NULL) {
     return 0;
   }
@@ -353,35 +353,35 @@ int KRun_cmd_value(KToken *tok, int base) {
   v = (int)strtol(p, NULL, 0);
   if (tok->flag == 0) return v;
   v = (tok->flag > 0) ? base + v : base - v;
-  
+
   return (int)v;
 }
 
 s_bool KRun_O(SakuraObj *skr, KToken *tok) {
   KTrack *tr;
-  
+
   tr = SakuraObj_curTrack(skr);
   tr->o = KRun_cmd_value(tok, tr->o);
   tr->o = SET_IN_RANGE(0, 10, tr->o);
-  
+
   return S_TRUE;
 }
 
 s_bool KRun_Q(SakuraObj *skr, KToken *tok) {
   KTrack *tr;
-  
+
   tr = SakuraObj_curTrack(skr);
   tr->q = KRun_cmd_value(tok, tr->q);
   tr->q = SET_IN_RANGE(1, 1000, tr->q);
   tr->q_step_mode = (tok->no == 1);
-  
+
   return S_TRUE;
 }
 
 s_bool KRun_V(SakuraObj *skr, KToken *tok) {
   KTrack *tr;
   int v;
-  
+
   tr = SakuraObj_curTrack(skr);
   // direct value?
   if (tok->arg != NULL) {
@@ -403,25 +403,25 @@ s_bool KRun_V(SakuraObj *skr, KToken *tok) {
     }
   }
   tr->v = SET_IN_RANGE(1, 127, tr->v);
-  
+
   return S_TRUE;
 }
 
 s_bool KRun_T(SakuraObj *skr, KToken *tok) {
   KTrack *tr;
-  
+
   tr = SakuraObj_curTrack(skr);
   tr->t = KRun_cmd_value(tok, tr->t);
-  
+
   return S_TRUE;
 }
 
 s_bool KRun_H(SakuraObj *skr, KToken *tok) {
   KTrack *tr;
-  
+
   tr = SakuraObj_curTrack(skr);
   tr->h = KRun_cmd_value(tok, tr->h);
-  
+
   return S_TRUE;
 }
 
@@ -466,11 +466,11 @@ int KRun_calcNoteLen(const char *s, int def, int timebase) {
 
 s_bool KRun_octaveUD(SakuraObj *skr, KToken *tok) {
   KTrack *tr;
-  
+
   tr = SakuraObj_curTrack(skr);
   tr->o += tok->flag;
   tr->o = SET_IN_RANGE(0, 10, tr->o);
-  
+
   return S_TRUE;
 }
 
@@ -485,21 +485,21 @@ s_bool KRun_loopBegin(SakuraObj *skr, KToken *tok) {
     KRun_evalToken(skr, tok->arg);
     loop_count = KRun_popInt(skr);
   }
-  
+
   // set loop
   item = s_new(KLoopItem);
   item->begin = tok;
   item->index = 0;
   item->count = loop_count;
   SList_push(skr->loopStack, item);
-  
-  
+
+
   return S_TRUE;
 }
 
 s_bool KRun_loopEnd(SakuraObj *skr, KToken *tok) {
   KLoopItem *item;
-  
+
   if (skr->loopStack->len == 0) {
     k_error(skr, K_ERROR_LOOP_RANGE, "']'", tok->pos);
     return S_FALSE;
@@ -521,13 +521,13 @@ s_bool KRun_loopEnd(SakuraObj *skr, KToken *tok) {
 s_bool KRun_loopBreak(SakuraObj *skr, KToken *tok) {
   KLoopItem *item;
   KToken *t;
-  
+
   if (skr->loopStack->len == 0) {
     k_error(skr, K_ERROR_LOOP_RANGE, "':'", tok->pos);
     return S_FALSE;
   }
   item = (KLoopItem*)SList_peekLast(skr->loopStack);
-  
+
   // loop finished? break
   if (item->index == item->count - 1) {
     SList_pop(skr->loopStack);
@@ -577,14 +577,14 @@ s_bool KRun_channel(SakuraObj *skr, KToken *tok) {
   SValue *no;
   KTrack *tr;
   int n;
-  
+
   tr = SakuraObj_curTrack(skr);
-  
+
   KRun_evalTokenList(skr, tok->arg);
   no = SList_pop(skr->valueStack);
   n = SValue_getInt(no);
   SValue_free(no);
-  
+
   n = SET_IN_RANGE(1, 16, n);
   tr->ch = n;
 
@@ -597,10 +597,10 @@ s_bool KRun_program(SakuraObj *skr, KToken *tok) {
   int n;
   KSmfTrack *smf_tr;
   KSmfEvent *e;
-  
+
   tr = SakuraObj_curTrack(skr);
   smf_tr = SakuraObj_curSmfTrack(skr);
-  
+
   KRun_evalTokenList(skr, tok->arg);
   no = KRun_popValue(skr);
   if (no != NULL && no->v_type != SVALUE_TYPE_NULL) {
@@ -622,7 +622,7 @@ s_bool KRun_program(SakuraObj *skr, KToken *tok) {
   e->data1 = n - 1;
   e->data2 = 0;
   KSmfTrack_append(smf_tr, e);
-  
+
   return S_TRUE;
 }
 
@@ -632,12 +632,12 @@ s_bool KRun_CC(SakuraObj *skr, KToken *tok) {
   int no, v;
   KSmfTrack *smf_tr;
   KSmfEvent *e;
-  
+
   tr = SakuraObj_curTrack(skr);
   smf_tr = SakuraObj_curSmfTrack(skr);
-  
+
   KRun_evalTokenList(skr, tok->arg);
-  
+
   // (2/2) value
   value = SList_pop(skr->valueStack);
   if (value == NULL) {
@@ -675,18 +675,18 @@ s_bool KRun_rpn_nrpn(SakuraObj *skr, KToken *tok, int msb_cc, int lsb_cc) {
   KTrack *tr;
   KSmfTrack *smf_tr;
   KSmfEvent *e;
-   
+
   // eval
   KRun_evalTokenList(skr, tok->arg);
   if (tok->no >= 4) { v_lsb = KRun_popInt(skr); }
   v_msb = KRun_popInt(skr);
   n_lsb = KRun_popInt(skr);
   n_msb = KRun_popInt(skr);
-  
+
   // write
   tr = SakuraObj_curTrack(skr);
   smf_tr = SakuraObj_curSmfTrack(skr);
-  
+
   // RPN/NRPN Time Shift
   t = 0;
   if (tr->rpn_nrpn_time_last != tr->time) {
@@ -696,19 +696,19 @@ s_bool KRun_rpn_nrpn(SakuraObj *skr, KToken *tok, int msb_cc, int lsb_cc) {
     tr->rpn_nrpn_time_shift++;
     t = tr->rpn_nrpn_time_shift;
   }
-  
+
   e = KSmfEvent_newCC(tr->time + t, tr->ch, msb_cc, n_msb);
   KSmfTrack_append(smf_tr, e);
   e = KSmfEvent_newCC(tr->time + t, tr->ch, lsb_cc, n_lsb);
   KSmfTrack_append(smf_tr, e);
-  
+
   e = KSmfEvent_newCC(tr->time + t + 1, tr->ch,   6, v_msb);
   KSmfTrack_append(smf_tr, e);
   if (tok->no >= 4) {
     e = KSmfEvent_newCC(tr->time + t + 1, tr->ch, 38, v_lsb);
     KSmfTrack_append(smf_tr, e);
   }
-  
+
   return S_TRUE;
 }
 
@@ -737,7 +737,7 @@ s_bool KRun_pushValue(SakuraObj *skr, SValue *v) {
 SValue* KRun_popValue(SakuraObj *skr) {
   SValue *v;
   SString *tmp;
-  
+
   v = SList_pop(skr->valueStack);
   if (skr->debug) {
     tmp = SValue_getString(v);
@@ -770,7 +770,7 @@ s_bool KRun_string(SakuraObj *skr, KToken *tok) {
 // Push Variable
 s_bool KRun_variable(SakuraObj *skr, KToken *tok) {
   SValue *v;
-  
+
   // get variable
   v = SHash_get(skr->local_vars, tok->value->ptr);
   if (v == NULL) {
@@ -786,12 +786,12 @@ s_bool KRun_variable(SakuraObj *skr, KToken *tok) {
 s_bool KRun_evalTokens_operator(SakuraObj *skr, KToken *tok) {
   SValue *a, *b;
   int v;
-  
+
   a = KRun_evalTokenPop(skr, tok->arg);
   b = KRun_evalTokenPop(skr, tok->extra);
   if (skr->debug) {
     printf("(CALC/POP=[%d],[%d])", SValue_getInt(a), SValue_getInt(b));
-  }  
+  }
   switch (tok->token_type) {
     case KTOKEN_ADD:
       SValue_add(a, b);
@@ -849,28 +849,28 @@ s_bool KRun_evalTokens_operator(SakuraObj *skr, KToken *tok) {
       printf("[SYSTEM ERROR] KRun_evalTokens_operator\n");
       break;
   }
-  
+
   // free
   SValue_free(a);
   SValue_free(b);
-  
+
   return S_TRUE;
 }
 
 SValue *KRun_evalTokenPop(SakuraObj *skr, KToken *tok) {
   SValue *v;
   SString *tmp;
-  
+
   if (tok == NULL) {
       k_error(skr, K_ERROR_SYSTEM, "Stack not enough.", NULL);
       return NULL;
   }
-  
+
   if (!KRun_evalTokenList(skr, tok)) {
     return NULL;
   }
   v = KRun_popValue(skr);
-  
+
   if (skr->debug) {
     if (v == NULL) {
       k_error(skr, K_ERROR_SYSTEM, "Stack not enough.", tok->pos);
@@ -880,7 +880,7 @@ SValue *KRun_evalTokenPop(SakuraObj *skr, KToken *tok) {
       SString_free(tmp);
     }
   }
-  
+
   return v;
 }
 
@@ -891,7 +891,7 @@ s_bool KRun_evalToken(SakuraObj *skr, KToken *tok) {
   KFunction *f;
   char buf[1024];
   KRun_Command runcmd;
-  
+
   if (tok == NULL) return S_TRUE;
   switch (t->token_type) {
     case KTOKEN_NUMBER:
@@ -966,10 +966,10 @@ s_bool KRun_evalToken(SakuraObj *skr, KToken *tok) {
   } // end of switch
   return S_TRUE;
 }
-  
+
 s_bool KRun_evalTokenList(SakuraObj *skr, KToken *tok) {
   KToken *t;
-  
+
   t = tok;
   while (t != NULL) {
     if (KRun_evalToken(skr, t)) {
@@ -987,7 +987,7 @@ s_bool KRun_time(SakuraObj *skr, KToken *tok) {
   int mes, beat, tick;
   SValue *m, *b, *t;
   int step;
-  
+
   // eval time params
   if (tok->no == 1) {
     KRun_evalToken(skr, tok->arg);
@@ -1017,13 +1017,13 @@ s_bool KRun_time(SakuraObj *skr, KToken *tok) {
 
 s_bool KRun_measureShift(SakuraObj *skr, KToken *tok) {
   SValue *v;
-  
+
   // eval time params
   KRun_evalTokenList(skr, tok->arg);
   v = KRun_popValue(skr);
   skr->info->measureShift = SValue_getInt(v);
   SValue_free(v);
-  
+
   return S_TRUE;
 }
 
@@ -1035,14 +1035,14 @@ s_bool KRun_tempo(SakuraObj *skr, KToken *tok) {
   double usec_d;
   unsigned long usec;
 
-  
+
   tempo = KRun_evalTokenPop(skr, tok->arg);
   skr->info->tempo = SValue_getInt(tempo);
   SValue_free(tempo);
-  
+
   usec_d = 60 * pow(10, 6) / skr->info->tempo;
   usec = (unsigned long)usec_d;
-  
+
   // Tempo
   smf_tr = SakuraObj_curSmfTrack(skr);
   e = KSmfEvent_new();
@@ -1055,7 +1055,7 @@ s_bool KRun_tempo(SakuraObj *skr, KToken *tok) {
   e->meta[1] = (usec >> 8 ) & 0xFF;
   e->meta[2] = (usec      ) & 0xFF;
   KSmfTrack_append(smf_tr, e);
-  
+
   return S_TRUE;
 }
 
@@ -1135,7 +1135,7 @@ s_bool KRun_writeMeta1b(SakuraObj *skr, KToken *tok, s_byte data1) {
   v = KRun_evalTokenPop(skr, tok->arg);
   no = SValue_getInt(v);
   SValue_free(v);
-  
+
   // memory to track info
   if (data1 == 0x21) { // PORT info
     cur->Port = no;
@@ -1168,15 +1168,15 @@ s_bool KRun_timeSignature(SakuraObj *skr, KToken *tok) {
   KTrack *tr;
   KSmfTrack * smf_tr;
   KSmfEvent *e;
-  
+
   // eval argments
   KRun_evalTokenList(skr, tok->arg);
   bo = KRun_popInt(skr);
   si = KRun_popInt(skr);
-  
+
   skr->info->timeSig_nume = si;
   skr->info->timeSig_deno = bo;
-  
+
   // calc bunbo
   i = 1;
   for (;;) {
@@ -1185,7 +1185,7 @@ s_bool KRun_timeSignature(SakuraObj *skr, KToken *tok) {
     i++;
   }
   cbo = i;
-  
+
   //
   tr = SakuraObj_curTrack(skr);
   smf_tr = SakuraObj_curSmfTrack(skr);
@@ -1215,7 +1215,7 @@ s_bool KRun_sysex(SakuraObj *skr, KToken *tok) {
   int i = 0, n = 0, nn = 0, len = 0;
   s_bool is_count = S_FALSE;
   int counter = 0;
-  
+
   memset(buf, 0, sizeof(buf)); // zero
   while (arg != NULL) {
     // for CHECK SUM
@@ -1249,7 +1249,7 @@ s_bool KRun_sysex(SakuraObj *skr, KToken *tok) {
   }
   len = i;
   if (len == 0) return S_FALSE;
-  
+
   if (skr->debug) {
     printf("SysEx$=");
     for (i = 0; i < len; i++) {
@@ -1257,7 +1257,7 @@ s_bool KRun_sysex(SakuraObj *skr, KToken *tok) {
     }
     printf("\n");
   }
-  
+
   smf_tr = SakuraObj_curSmfTrack(skr);
   e = KSmfEvent_new();
   e->time = cur->time;
@@ -1278,11 +1278,11 @@ s_bool KRun_writeText(SakuraObj *skr, KToken *tok, s_byte meta_type) {
   KTrack *cur = SakuraObj_curTrack(skr);
   KSmfTrack *smf_tr;
   KSmfEvent *e;
-  
+
   text_v = KRun_evalTokenPop(skr, tok->arg);
   text = SValue_getString(text_v);
   SValue_free(text_v);
-  
+
   // text
   smf_tr = SakuraObj_curSmfTrack(skr);
   e = KSmfEvent_new();
@@ -1294,7 +1294,7 @@ s_bool KRun_writeText(SakuraObj *skr, KToken *tok, s_byte meta_type) {
   memcpy(e->meta, text->ptr, text->len);
   KSmfTrack_append(smf_tr, e);
   SString_free(text);
-  
+
   return S_TRUE;
 }
 
@@ -1306,10 +1306,10 @@ s_bool KRun_metaText(SakuraObj *skr, KToken *tok) {
 
 s_bool KRun_include(SakuraObj *skr, KToken *tok) {
   KFile *include_file;
-  
+
   // find file
   include_file = tok->extra;
-  
+
   return KRun_runFile(skr, include_file);
 }
 
@@ -1319,7 +1319,7 @@ s_bool KRun_harmony(SakuraObj *skr, KToken *tok) {
   KTrack *track;
   int len, tmp_len;
   s_bool result = S_TRUE;
-  
+
   track = SakuraObj_curTrack(skr);
   harm_len = tok->value;
   harm_file = tok->extra;
@@ -1333,7 +1333,7 @@ s_bool KRun_harmony(SakuraObj *skr, KToken *tok) {
   track->time += len;
   skr->info->is_harmony = S_FALSE;
   track->l = tmp_len;
-  
+
   return result;
 }
 
@@ -1344,7 +1344,7 @@ s_bool KRun_div(SakuraObj *skr, KToken *tok) {
   int cur_time;
   int len, tmp_len, cnt;
   s_bool result = S_TRUE;
-  
+
   track = SakuraObj_curTrack(skr);
   div_len = tok->value;
   div_file = tok->extra;
@@ -1358,7 +1358,7 @@ s_bool KRun_div(SakuraObj *skr, KToken *tok) {
   result = KRun_runFile(skr, div_file);
   track->time = cur_time + len;
   track->l = tmp_len;
-  
+
   return result;
 }
 
@@ -1385,14 +1385,14 @@ s_bool KRun_trackKey(SakuraObj *skr, KToken *tok) {
 s_bool KRun_print(SakuraObj *skr, KToken *tok) {
   SValue *v;
   SString *buf;
-  
+
   // eval arugment
   v = KRun_evalTokenPop(skr, tok->arg);
   if (v == NULL) {
     k_error(skr, K_ERROR_SYNTAX, "Print Argument Error", tok->pos);
     return S_FALSE;
   }
-  
+
   // print
   buf = SValue_getString(v);
   if (skr->use_print_console) {
@@ -1402,7 +1402,7 @@ s_bool KRun_print(SakuraObj *skr, KToken *tok) {
   SString_append(skr->print_buf, "\n");
   SString_free(buf);
   SValue_free(v);
-    
+
   return S_TRUE;
 }
 
@@ -1412,11 +1412,11 @@ s_bool KRun_if(SakuraObj *skr, KToken *tok) {
   KToken *expr_t = tok->arg;
   KTokenFlowOption *opt = tok->extra;
   s_bool res;
-  
+
   v = KRun_evalTokenPop(skr, expr_t);
   res = SValue_getBool(v);
   SValue_free(v);
-  
+
   if (res) {
     if (skr->debug) { printf("TRUE\n"); }
     KRun_runTokenList(skr, opt->true_t);
@@ -1426,7 +1426,7 @@ s_bool KRun_if(SakuraObj *skr, KToken *tok) {
       KRun_runTokenList(skr, opt->false_t);
     }
   }
-  
+
   return S_TRUE;
 }
 
@@ -1435,7 +1435,7 @@ s_bool KRun_while(SakuraObj *skr, KToken *tok) {
   KToken *expr_t = tok->arg;
   KTokenFlowOption *opt = tok->extra;
   s_bool res;
-  
+
   for (;;) {
     v = KRun_evalTokenPop(skr, expr_t);
     res = SValue_getBool(v);
@@ -1449,7 +1449,7 @@ s_bool KRun_while(SakuraObj *skr, KToken *tok) {
       break;
     }
   }
-  
+
   return S_TRUE;
 }
 
@@ -1457,9 +1457,9 @@ s_bool KRun_while(SakuraObj *skr, KToken *tok) {
 s_bool KRun_defineINT(SakuraObj *skr, KToken *tok) {
   SString *vname;
   SValue *v;
-  
+
   vname = tok->value;
-  
+
   // eval params
   v = KRun_popValue(skr);
   if (skr->debug) {
@@ -1467,17 +1467,17 @@ s_bool KRun_defineINT(SakuraObj *skr, KToken *tok) {
   }
   // set to variables
   SHash_set(skr->variables, vname->ptr, v);
-  
-  return S_FALSE;
+
+  return S_TRUE;
 }
 
 s_bool KRun_defineSTR(SakuraObj *skr, KToken *tok) {
   SString *vname;
   SValue *v;
   SString *tmp;
-  
+
   vname = tok->value;
-  
+
   // eval params
   v = SList_pop(skr->valueStack);
   if (skr->debug) {
@@ -1487,19 +1487,19 @@ s_bool KRun_defineSTR(SakuraObj *skr, KToken *tok) {
   }
   // set to variable list
   SHash_set(skr->variables, vname->ptr, v);
-  
-  return S_FALSE;
+
+  return S_TRUE;
 }
 
 s_bool KRun_defineARRAY(SakuraObj *skr, KToken *tok) {
   SValue *va, *vi;
   int sz, i;
   SString *vname;
-  
+
   sz = KToken_count(tok->arg);
   // printf("[ARRAY count=%d]\n", sz);
   va = SValue_newArray();
-  
+
   if (tok->arg != NULL) {
     // eval array list
     KRun_evalTokenList(skr, tok->arg);
@@ -1511,7 +1511,7 @@ s_bool KRun_defineARRAY(SakuraObj *skr, KToken *tok) {
   // set to variable list
   vname = tok->value;
   SHash_set(skr->variables, vname->ptr, va);
-  
+
   return S_TRUE;
 }
 
@@ -1519,7 +1519,7 @@ s_bool KRun_doVariable(SakuraObj *skr, KToken *tok) {
   SValue *var_value;
   SString *src;
   char buf[1024];
-  
+
   // (note) can not cache variable contents, maybe change
   // get variable object
   var_value = SHash_get(skr->variables, tok->value->ptr);
@@ -1548,25 +1548,25 @@ s_bool KRun_goto(SakuraObj *skr, KToken *tok) {
 
 s_bool KRun_goto_if_true(SakuraObj *skr, KToken *tok) {
   SValue *v;
-  
+
   v = SList_pop(skr->valueStack);
   if (SValue_getBool(v)) {
     k_run_next_token = tok->arg;
   }
-  
+
   return S_TRUE;
 }
 
 s_bool KRun_goto_if_false(SakuraObj *skr, KToken *tok) {
   SValue *v;
-  
+
   v = SList_pop(skr->valueStack);
   if (!SValue_getBool(v)) {
     k_run_next_token = tok->arg;
   }
-  
+
   return S_TRUE;
- 
+
 }
 
 s_bool KRun_octaveOnetime(SakuraObj *skr, KToken *tok) {
@@ -1577,11 +1577,11 @@ s_bool KRun_octaveOnetime(SakuraObj *skr, KToken *tok) {
 
 s_bool KRun_function_skip(SakuraObj *skr, KToken *tok) {
   KTokenFlowOption *opt;
-  
+
   // skip define function
   opt = tok->extra;
   k_run_next_token = opt->false_t;
-  
+
   return S_TRUE;
 }
 
@@ -1590,11 +1590,11 @@ s_bool KRun_callUserFunc(SakuraObj *skr, KToken *tok) {
   KFunction *func = (KFunction*)tok->extra;
   KFuncArg *arg;
   SValue *v;
-  
+
   if (skr->debug) {
     printf("[callUserFunc:%s]\n", func->name);
   }
-  
+
   // eval arguments
   if (tok->arg != NULL) {
     KRun_runTokenList(skr, tok->arg);
@@ -1620,7 +1620,7 @@ s_bool KRun_callUserFunc(SakuraObj *skr, KToken *tok) {
   KRun_runTokenList(skr, func->tokens);
   // clear local variable
   SHash_clear(skr->local_vars);
-  
+
   return S_TRUE;
 }
 
@@ -1635,7 +1635,7 @@ s_bool KRun_return(SakuraObj *skr, KToken *tok) {
 s_bool KRun_MML_r(SakuraObj *skr, KToken *tok) {
   char cmd[1024], buf[1024];
   KTrack *tr;
-  
+
   // get command
   if (tok->value->len < 1024) {
     strcpy(cmd, tok->value->ptr);
@@ -1643,9 +1643,9 @@ s_bool KRun_MML_r(SakuraObj *skr, KToken *tok) {
     strcpy(cmd, "");
     k_error(skr, K_ERROR_SYNTAX, "MML Command Too Long", tok->pos);
   }
-  
+
   tr = SakuraObj_curTrack(skr);
-  
+
   // Check Command Value
   if (strcmp(cmd, "@")==0) KRun_pushValue(skr, SValue_newInt(tr->Voice));
   else if (strcmp(cmd, "CH")==0) KRun_pushValue(skr, SValue_newInt(tr->ch));
@@ -1690,7 +1690,7 @@ s_bool KRun_keyflag(SakuraObj *skr, KToken *tok) {
   int i, nn;
   SValue *v;
   char *p;
-  
+
   // set (a,b,c,d,e,f,g)
   if (tok->flag == 0) {
     KRun_evalTokenList(skr, tok->arg);
@@ -1701,7 +1701,7 @@ s_bool KRun_keyflag(SakuraObj *skr, KToken *tok) {
     }
     return S_TRUE;
   }
-  
+
   // set + - note
   for (i = 0; i < 7; i++) { // reset
     skr->info->keyflag[i] = 0;
@@ -1793,11 +1793,11 @@ s_bool KRun_vAdd(SakuraObj *skr, KToken *tok) {
 
 s_bool KRun_sharp_macro_define(SakuraObj *skr, KToken *tok) {
   SValue *mml;
-  
+
   KRun_evalToken(skr, tok->arg);
   mml = KRun_popValue(skr);
   SHash_set(skr->variables, tok->value->ptr, mml);
-  
+
   return S_TRUE;
 }
 
@@ -1881,7 +1881,7 @@ s_bool KRun_mid_r(SakuraObj *skr, KToken *tok) {
   SValue *sv;
   int index, len;
   SString *s, *res;
-  
+
   // get params
   KRun_evalTokenList(skr, tok->arg);
   len = KRun_popInt(skr);
@@ -1889,13 +1889,13 @@ s_bool KRun_mid_r(SakuraObj *skr, KToken *tok) {
   sv = KRun_popValue(skr);
   s = SValue_getString(sv);
   SValue_free(sv);
-  
+
   // mid
   res = SString_substr(s, index - 1, len);
   SString_free(s);
   KRun_pushValue(skr, SValue_newString(res->ptr));
   SString_free(res);
-  
+
   return S_TRUE;
 }
 
@@ -1931,7 +1931,7 @@ s_bool KRun_NoteNo_r(SakuraObj *skr, KToken *tok) {
   KTrack *tr;
   char *p;
   int notechar, noteno;
- 
+
   // pop argument
   v = KRun_evalTokenPop(skr, tok->arg);
   s = SValue_getString(v);
@@ -1966,7 +1966,7 @@ s_bool KRun_NoteNo_r(SakuraObj *skr, KToken *tok) {
   noteno += tr->track_key;
   noteno += skr->info->key;
   // TODO: timekey flag
-  // 
+  //
   KRun_pushValue(skr, SValue_newInt(noteno));
   SValue_free(v);
   return S_TRUE;
@@ -1975,14 +1975,14 @@ s_bool KRun_NoteNo_r(SakuraObj *skr, KToken *tok) {
 s_bool KRun_array_element(SakuraObj *skr, KToken *tok) {
   SValue *a, *v;
   int i;
-  
+
   KRun_evalToken(skr, tok->arg);
   i = KRun_popInt(skr);
   a = KRun_popValue(skr);
   v = SValue_getArrayElement(a, i);
   KRun_pushValue(skr, SValue_clone(v));
   SValue_free(a);
-  
+
   return S_TRUE;
 }
 
@@ -2011,7 +2011,7 @@ s_bool KRun_var_replace(SakuraObj *skr, KToken *tok) {
   rep_s = SValue_getString(rep);
   res = SString_replace(s, key_s->ptr, rep_s->ptr);
   SValue_setString(v, res->ptr);
-    
+
 lbl_free:
   SString_free(key_s);
   SString_free(rep_s);
@@ -2022,5 +2022,3 @@ lbl_free:
   //
   return result;
 }
-
-
