@@ -126,9 +126,9 @@ s_bool KRun_runTokenList(SakuraObj *skr, KToken *token_top) {
       case KTOKEN_DEC: KRun_pushValue(skr, SValue_newInt(KRun_popInt(skr) - 1)); break;
       case KTOKEN_ARRAY_ELEMENT: res = KRun_array_element(skr, tok); break;
       case KTOKEN_VAR_REPLACE: res = KRun_var_replace(skr, tok); break;
-      case KTOKEN_PLAY_BEGIN: res = KRun_playBegin(skr, tok); break;
-      case KTOKEN_PLAY_END: res = KRun_playEnd(skr, tok); break;
-      case KTOKEN_PLAY_TRACK: res = KRun_playTrack(skr, tok); break;
+      case KTOKEN_PLAY_BEGIN: res = KRun_playCmdBegin(skr, tok); break;
+      case KTOKEN_PLAY_END: res = KRun_playCmdEnd(skr, tok); break;
+      case KTOKEN_PLAY_TRACK: res = KRun_playCmdTrack(skr, tok); break;
       default:
         printf("[ERROR] (Runtime) unknown 0x%x\n", tok->token_type);
         break;
@@ -171,17 +171,17 @@ s_bool KRun_NOP(SakuraObj *skr, KToken *tok) {
   return S_TRUE;
 }
 
-s_bool KRun_playBegin(SakuraObj *skr, KToken *tok) {
+s_bool KRun_playCmdBegin(SakuraObj *skr, KToken *tok) {
   KTrack *cur = SakuraObj_curTrack(skr);
   skr->info->play_temp_track = skr->info->track_no;
   skr->info->play_temp_time = cur->time;
   return S_TRUE;
 }
-s_bool KRun_playEnd(SakuraObj *skr, KToken *tok) {
+s_bool KRun_playCmdEnd(SakuraObj *skr, KToken *tok) {
   skr->info->track_no = skr->info->play_temp_track;
   return S_TRUE;
 }
-s_bool KRun_playTrack(SakuraObj *skr, KToken *tok) {
+s_bool KRun_playCmdTrack(SakuraObj *skr, KToken *tok) {
   int no;
   KTrack *tr;
   //
