@@ -29,7 +29,7 @@ objs=$obj_s
 # ---
 # make sakura
 sakurac: \$(objs)
-	$(cc) $(opt_lm) -o sakurac $(objs)
+	$(cc) $(opt) -o sakurac $(objs) -lm
 	ctags *.c *.h
 # ---
 # every object

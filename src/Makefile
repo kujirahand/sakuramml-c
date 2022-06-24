@@ -7,7 +7,7 @@ objs=k_fomatter.o k_function.o k_main.o k_parser.o k_parser_test.o k_run.o k_run
 # ---
 # make sakura
 sakurac: $(objs)
-	$(cc) $(opt_lm) -o sakurac $(objs)
+	$(cc) $(opt) -o sakurac $(objs) -lm
 	ctags *.c *.h
 # ---
 # every object
